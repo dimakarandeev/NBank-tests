@@ -1,6 +1,5 @@
-package api.iteration1;
+package iteration1;
 
-import api.BaseTest;
 import models.CreateUserRequest;
 import org.junit.jupiter.api.Test;
 import requests.skelethon.Endpoint;

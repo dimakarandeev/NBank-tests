@@ -27,22 +27,6 @@ public class ModelComparator {
     }
 
     private static Object getFieldValue(Object obj, String fieldName) {
-        if (obj == null || fieldName == null)
-            return null;
-
-        String[] parts = fieldName.split("\\.");
-        Object currnet = obj;
-
-        for (String part : parts) {
-            if (currnet == null)
-                return null;
-
-            currnet = getSingleField(currnet, part);
-        }
-        return currnet;
-    }
-
-    private static Object getSingleField(Object obj, String fieldName) {
         Class<?> clazz = obj.getClass();
         while (clazz != null) {
             try {
@@ -55,7 +39,7 @@ public class ModelComparator {
                 throw new RuntimeException("Cannot access field: " + fieldName, e);
             }
         }
-        throw new RuntimeException("Field not found: " + fieldName + " in " + obj.getClass().getName());
+        throw new RuntimeException("Field not found: " + fieldName + " in class " + obj.getClass().getName());
     }
 
     public static class ComparisonResult {

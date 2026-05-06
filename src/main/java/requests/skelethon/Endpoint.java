@@ -3,10 +3,6 @@ package requests.skelethon;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import models.*;
-import models.modelTransferUserDeposit.TransferUserDepositRequest;
-import models.modelTransferUserDeposit.TransferUserDepositResponse;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 
 @Getter
 @AllArgsConstructor
@@ -28,24 +24,6 @@ public enum Endpoint {
             "/accounts",
             BaseModel.class,
             CreateAccountResponse.class
-    ),
-
-    DEPOSIT(
-            "/accounts/deposit",
-            AddUserDepositRequest.class,
-            AddUserDepositResponse.class
-    ),
-
-    TRANSFER(
-            "/accounts/transfer",
-            TransferUserDepositRequest.class,
-            TransferUserDepositResponse.class
-    ),
-
-    CUSTOMER_PROFILE(
-            "/customer/profile",
-            UpdateCustomerProfileRequest.class,
-            UpdateCustomerProfileResponse.class
     );
 
 
