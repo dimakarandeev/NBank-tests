@@ -27,7 +27,7 @@ public class ModelComparator {
     }
 
     private static Object getFieldValue(Object obj, String fieldName) {
-        if (obj == null || fieldName == null)
+        if (obj == null || fieldName == null )
             return null;
 
         String[] parts = fieldName.split("\\.");

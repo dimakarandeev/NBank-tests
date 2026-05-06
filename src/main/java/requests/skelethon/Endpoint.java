@@ -33,20 +33,17 @@ public enum Endpoint {
     DEPOSIT(
             "/accounts/deposit",
             AddUserDepositRequest.class,
-            AddUserDepositResponse.class
-    ),
+            AddUserDepositResponse.class),
 
     TRANSFER(
             "/accounts/transfer",
             TransferUserDepositRequest.class,
-            TransferUserDepositResponse.class
-    ),
+            TransferUserDepositResponse.class),
 
     CUSTOMER_PROFILE(
             "/customer/profile",
             UpdateCustomerProfileRequest.class,
-            UpdateCustomerProfileResponse.class
-    );
+            UpdateCustomerProfileResponse.class);
 
 
     private final String url;

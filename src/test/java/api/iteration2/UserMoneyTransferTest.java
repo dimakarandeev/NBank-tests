@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class UserMoneyTransferTest extends BaseTest {
 
-    public static Stream<Arguments> transferInvalidData() {
+    public static Stream<Arguments> transferInvalidData () {
         return Stream.of(
                 Arguments.of(-100.0, "Transfer amount must be at least 0.01"),
                 Arguments.of(0.0, "Transfer amount must be at least 0.01"),
@@ -24,7 +24,7 @@ public class UserMoneyTransferTest extends BaseTest {
 
     @MethodSource("transferInvalidData")
     @ParameterizedTest
-    public void userMoneyTransferWithInvalidData(double invalidBalance, String errorValue) {
+    public void userMoneyTransferWithInvalidData (double invalidBalance, String errorValue) {
         double maxAllowBalance = 5000.0;
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
@@ -39,7 +39,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.requestReturnsBadRequestWithText(errorValue));
     }
 
-    public static Stream<Arguments> transferCorrectData() {
+    public static Stream<Arguments> transferCorrectData () {
         return Stream.of(
                 Arguments.of(0.01),
                 Arguments.of(5000.0),
@@ -49,7 +49,7 @@ public class UserMoneyTransferTest extends BaseTest {
 
     @MethodSource("transferCorrectData")
     @ParameterizedTest
-    public void userMoneyTransferWithCorrectData(double correctBalance) {
+    public void userMoneyTransferWithCorrectData (double correctBalance) {
         double maxAllowBalance = 5000.0;
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
@@ -65,7 +65,7 @@ public class UserMoneyTransferTest extends BaseTest {
     }
 
     @Test
-    public void userTransferMoneyMoreDepositAmount() {
+    public void userTransferMoneyMoreDepositAmount () {
         double balance = 2500.0;
         double doubleBalance = balance * 2;
 
@@ -83,7 +83,7 @@ public class UserMoneyTransferTest extends BaseTest {
     }
 
     @Test
-    public void userTransferMoneyYourAccounts() {
+    public void userTransferMoneyYourAccounts () {
         double balance = 1500.0;
 
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();

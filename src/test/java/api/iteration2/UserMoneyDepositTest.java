@@ -12,9 +12,9 @@ import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
 
-public class UserMoneyDepositTest extends BaseTest {
+public class UserMoneyDepositTest extends BaseTest  {
 
-    public static Stream<Arguments> depositCorrectData() {
+    public static Stream<Arguments> depositCorrectData () {
         return Stream.of(
                 Arguments.of(0.01),
                 Arguments.of(5000.0),
@@ -24,14 +24,14 @@ public class UserMoneyDepositTest extends BaseTest {
 
     @MethodSource("depositCorrectData")
     @ParameterizedTest
-    public void userAddDepositWithCorrectData(double balance) {
+    public void userAddDepositWithCorrectData (double balance) {
         CreateUserRequest userRequest = AdminSteps.createUser();
         Integer accountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
 
         UserSteps.successDepositToUserAccount(userRequest, accountIdUser, balance);
     }
 
-    public static Stream<Arguments> depositInvalidData() {
+    public static Stream<Arguments> depositInvalidData () {
         return Stream.of(
                 Arguments.of(-100.0, "Deposit amount must be at least 0.01"),
                 Arguments.of(0.0, "Deposit amount must be at least 0.01"),
@@ -42,7 +42,7 @@ public class UserMoneyDepositTest extends BaseTest {
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @MethodSource("depositInvalidData")
     @ParameterizedTest
-    public void userAddDepositWithInvalidData(double balance, String errorValue) {
+    public void userAddDepositWithInvalidData (double balance, String errorValue) {
         CreateUserRequest userRequest = AdminSteps.createUser();
         Integer accountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
 
@@ -52,7 +52,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
-    public void userAddDepositOtherUser() {
+    public void userAddDepositOtherUser () {
         double deposit = 100.0;
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         UserSteps.createAccountsAndGetAccountsId(userRequestSender);
@@ -68,7 +68,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
-    public void userAddDepositNotExistUser() {
+    public void userAddDepositNotExistUser () {
         Integer idNotExistUser = -1;
         double deposit = 100.0;
 

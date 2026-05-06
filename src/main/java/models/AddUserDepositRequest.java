@@ -13,3 +13,4 @@ public class AddUserDepositRequest extends BaseModel {
     private Integer id;
     private Double balance;
 }
+

@@ -27,7 +27,7 @@ public class UserSteps {
                 .header("Authorization", Matchers.notNullValue());
     }
 
-    public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
+    public static Integer createAccountsAndGetAccountsId (CreateUserRequest userRequest) {
         RequestSpecification authSpec = authSpec(userRequest);
 
         return new CrudRequester(authSpec,
@@ -38,7 +38,7 @@ public class UserSteps {
                 .response().getBody().jsonPath().getInt("id");
     }
 
-    public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {
+    public static void successDepositToUserAccount (CreateUserRequest userRequest, Integer userId, double balance) {
         RequestSpecification authSpec = authSpec(userRequest);
 
         new CrudRequester(authSpec,
@@ -50,7 +50,7 @@ public class UserSteps {
                         .build());
     }
 
-    public static void failDepositToUserAccount(CreateUserRequest userRequest,
+    public static void failDepositToUserAccount (CreateUserRequest userRequest,
                                                 Integer accountIdUser,
                                                 double balance,
                                                 ResponseSpecification responseSpecs) {
@@ -65,7 +65,7 @@ public class UserSteps {
                         .build());
     }
 
-    public static void successTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
+    public static void successTransferMoneyAmongAccountsId (CreateUserRequest userRequestSenderUser,
                                                            Integer accountIdSenderUser,
                                                            Integer accountIdReceiverUser,
                                                            Double amount) {
@@ -82,7 +82,7 @@ public class UserSteps {
         ModelAssertions.assertThatModels(transferUserDepositRequest, transferUserDepositResponse).match();
     }
 
-    public static void failTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
+    public static void failTransferMoneyAmongAccountsId (CreateUserRequest userRequestSenderUser,
                                                         Integer accountIdSenderUser,
                                                         Integer accountIdReceiverUser,
                                                         Double amount,
@@ -97,7 +97,7 @@ public class UserSteps {
                 .post(transferUserDepositRequest);
     }
 
-    public static void failUpdateCustomerProfile(CreateUserRequest userRequest,
+    public static void failUpdateCustomerProfile (CreateUserRequest userRequest,
                                                  String name,
                                                  ResponseSpecification responseSpecs) {
 
@@ -110,7 +110,7 @@ public class UserSteps {
                 .put(updateCustomerProfileRequest);
     }
 
-    public static void successUpdateCustomerProfile(CreateUserRequest userRequest, String name) {
+    public static void successUpdateCustomerProfile (CreateUserRequest userRequest, String name) {
         RequestSpecification authSpec = authSpec(userRequest);
         UpdateCustomerProfileRequest updateCustomerProfileRequest = buildUpdateProfileRequest(name);
 
@@ -124,13 +124,13 @@ public class UserSteps {
         ModelAssertions.assertThatModels(updateCustomerProfileRequest, updateCustomerProfileResponse).match();
     }
 
-    private static UpdateCustomerProfileRequest buildUpdateProfileRequest(String name) {
+    private static UpdateCustomerProfileRequest buildUpdateProfileRequest (String name) {
         return UpdateCustomerProfileRequest.builder()
                 .name(name)
                 .build();
     }
 
-    private static TransferUserDepositRequest buildTransferUserDeposit(Integer accountIdSenderUser,
+    private static TransferUserDepositRequest buildTransferUserDeposit (Integer accountIdSenderUser,
                                                                        Integer accountIdReceiverUser,
                                                                        Double amount) {
         return TransferUserDepositRequest.builder()
@@ -140,7 +140,7 @@ public class UserSteps {
                 .build();
     }
 
-    private static RequestSpecification authSpec(CreateUserRequest userRequest) {
+    private static RequestSpecification authSpec (CreateUserRequest userRequest) {
         return RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword());
     }
 }

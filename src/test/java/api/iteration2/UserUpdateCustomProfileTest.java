@@ -17,14 +17,14 @@ public class UserUpdateCustomProfileTest extends BaseTest {
     private final String ERR_VALUE = "Name must contain two words with letters only";
 
     @Test
-    public void successChangeUserName() {
+    public void successChangeUserName () {
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();
         UserSteps.createAccountsAndGetAccountsId(userRequestSenderUser);
 
         UserSteps.successUpdateCustomerProfile(userRequestSenderUser, "John Smith");
     }
 
-    public static Stream<Arguments> nameInvalidData() {
+    public static Stream<Arguments> nameInvalidData () {
         return Stream.of(
                 Arguments.of("JohnSmith"),
                 Arguments.of("Иван Иванов"),
@@ -39,7 +39,7 @@ public class UserUpdateCustomProfileTest extends BaseTest {
 
     @MethodSource("nameInvalidData")
     @ParameterizedTest
-    public void changeUserNameWithInvalidData(String invalidName) {
+    public void changeUserNameWithInvalidData (String invalidName) {
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();
         UserSteps.createAccountsAndGetAccountsId(userRequestSenderUser);
 
