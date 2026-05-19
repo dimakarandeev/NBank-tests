@@ -8,13 +8,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
 import requests.steps.UserSteps;
+import specs.BankAPIAlert;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
 
 public class UserUpdateCustomProfileTest extends BaseTest {
-
-    private final String ERR_VALUE = "Name must contain two words with letters only";
 
     @Test
     public void successChangeUserName() {
@@ -44,6 +43,6 @@ public class UserUpdateCustomProfileTest extends BaseTest {
         UserSteps.createAccountsAndGetAccountsId(userRequestSenderUser);
 
         UserSteps.failUpdateCustomerProfile(userRequestSenderUser, invalidName,
-                ResponseSpecs.requestReturnsBadRequestWithText(ERR_VALUE));
+                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.PERSON_NAME_VALIDATION_ERROR.toString()));
     }
 }
