@@ -8,7 +8,7 @@ import com.codeborne.selenide.Selenide;
 import common.extensions.AdminSessionExtension;
 import common.extensions.BrowserMatchExtension;
 import common.extensions.UserSessionExtension;
-import iteration1.api.BaseTest;
+import iteration1.BaseTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 

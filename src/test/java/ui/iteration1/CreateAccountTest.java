@@ -1,6 +1,9 @@
 package ui.iteration1;
 
 import api.models.CreateAccountResponse;
+import api.models.CreateUserRequest;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.UserSteps;
 import common.annotations.UserSession;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
@@ -23,8 +26,8 @@ public class CreateAccountTest extends BaseUiTest {
         assertThat(createdAccounts).hasSize(1);
 
         new UserDashboard().checkAlertMessageAndAccept
-                (BankAlert.NEW_ACCOUNT_CREATED.getMessage() + createdAccounts.getFirst().getAccountNumber());
+                (BankAlert.NEW_ACCOUNT_CREATED.getMessage() + createdAccounts.get(0).getAccountNumber());
 
-        assertThat(createdAccounts.getFirst().getBalance()).isZero();
+        assertThat(createdAccounts.get(0).getBalance()).isZero();
     }
 }

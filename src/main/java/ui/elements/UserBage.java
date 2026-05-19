@@ -1,5 +1,8 @@
 package ui.elements;
 
+import com.codeborne.selenide.SelenideElement;
+import lombok.Getter;
+
 @Getter
 public class UserBage extends BaseElement {
     private String username;

@@ -1,6 +1,5 @@
 package api.requests.steps;
 
-import api.models.AccountResponse;
 import api.models.CreateAccountResponse;
 import api.requests.skelethon.Endpoint;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
@@ -18,7 +17,7 @@ public class UserSteps {
         this.password = password;
     }
 
-    public  List<CreateAccountResponse> getAllAccounts() {
+    public List<CreateAccountResponse> getAllAccounts() {
         return new ValidatedCrudRequester<CreateAccountResponse>(
                 RequestSpecs.authAsUser(username, password),
                 Endpoint.CUSTOMER_ACCOUNTS,

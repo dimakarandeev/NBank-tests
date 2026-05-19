@@ -17,16 +17,15 @@ import java.util.Map;
 public class RequestSpecs {
     private static Map<String, String> authHeaders = new HashMap<>(Map.of("admin", "Basic YWRtaW46YWRtaW4="));
 
-    private RequestSpecs() {
-    }
+    private RequestSpecs(){}
 
     private static RequestSpecBuilder defaultRequestBuilder() {
         return new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
-                .addFilters(List.of(new RequestLoggingFilter(),
+                .addFilters( List.of(new RequestLoggingFilter(),
                         new ResponseLoggingFilter()))
-                .setBaseUri(Config.getProperty("server") + Config.getProperty("apiVersion"));
+                .setBaseUri(Config.getProperty("apiBaseUrl") +Config.getProperty("apiVersion"));
     }
 
     public static RequestSpecification unauthSpec() {
@@ -40,6 +39,12 @@ public class RequestSpecs {
     }
 
     public static RequestSpecification authAsUser(String username, String password) {
+        return defaultRequestBuilder()
+                .addHeader("Authorization", getUserAuthHeader(username, password))
+                .build();
+    }
+
+    public static String getUserAuthHeader(String username, String password) {
         String userAuthHeader;
 
         if (!authHeaders.containsKey(username)) {
@@ -56,8 +61,6 @@ public class RequestSpecs {
             userAuthHeader = authHeaders.get(username);
         }
 
-        return defaultRequestBuilder()
-                .addHeader("Authorization", userAuthHeader)
-                .build();
+        return userAuthHeader;
     }
 }
