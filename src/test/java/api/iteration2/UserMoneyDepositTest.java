@@ -1,6 +1,7 @@
 package api.iteration2;
 
 import api.BaseTest;
+import generators.RandomData;
 import models.CreateUserRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,9 +35,9 @@ public class UserMoneyDepositTest extends BaseTest {
 
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
-                Arguments.of(-100.0, BankAPIAlert.AMOUNT_TOO_SMALL),
-                Arguments.of(0.0, BankAPIAlert.AMOUNT_TOO_SMALL),
-                Arguments.of(5001.0, BankAPIAlert.AMOUNT_TOO_LARGE)
+                Arguments.of(-100.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
+                Arguments.of(0.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
+                Arguments.of(5001.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage())
         );
     }
 
@@ -54,7 +55,8 @@ public class UserMoneyDepositTest extends BaseTest {
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
     public void userAddDepositOtherUser() {
-        double deposit = 100.0;
+        double deposit = RandomData.getRandomRandomDecimalDeposit();
+
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         UserSteps.createAccountsAndGetAccountsId(userRequestSender);
 
@@ -64,21 +66,20 @@ public class UserMoneyDepositTest extends BaseTest {
         UserSteps.failDepositToUserAccount(userRequestSender,
                 receiverAccountIdUser,
                 deposit,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.toString()));
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()));
     }
 
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
     public void userAddDepositNotExistUser() {
-        Integer idNotExistUser = -1;
-        double deposit = 100.0;
+        double deposit = RandomData.getRandomRandomDecimalDeposit();
 
         CreateUserRequest userRequest = AdminSteps.createUser();
-        UserSteps.createAccountsAndGetAccountsId(userRequest);
+        Integer receiverAccountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
 
         UserSteps.failDepositToUserAccount(userRequest,
-                idNotExistUser,
+                -Math.abs(receiverAccountIdUser),
                 deposit,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.toString()));
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()));
     }
 }

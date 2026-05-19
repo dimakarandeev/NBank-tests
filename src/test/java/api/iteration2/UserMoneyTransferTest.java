@@ -1,6 +1,7 @@
 package api.iteration2;
 
 import api.BaseTest;
+import generators.RandomData;
 import models.CreateUserRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
 import requests.steps.UserSteps;
+import specs.BankAPIAlert;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
@@ -15,18 +17,17 @@ import java.util.stream.Stream;
 public class UserMoneyTransferTest extends BaseTest {
 
     public static Stream<Arguments> transferInvalidData() {
+        double maxAllowBalance = 5000.0;
         return Stream.of(
-                Arguments.of(-100.0, "Transfer amount must be at least 0.01"),
-                Arguments.of(0.0, "Transfer amount must be at least 0.01"),
-                Arguments.of(10001.0, "Transfer amount cannot exceed 10000")
+                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage())
         );
     }
 
     @MethodSource("transferInvalidData")
-    @ParameterizedTest
-    public void userMoneyTransferWithInvalidData(double invalidBalance, String errorValue) {
-        double maxAllowBalance = 5000.0;
-
+    @ParameterizedTest(name = "invalidBalance={0}, maxAllowBalance={1}")
+    public void userMoneyTransferWithInvalidData(double invalidBalance, double maxAllowBalance, String errorValue) {
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         Integer senderAccountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequestSender);
         UserSteps.successDepositToUserAccount(userRequestSender, senderAccountIdUser, maxAllowBalance);
@@ -40,17 +41,17 @@ public class UserMoneyTransferTest extends BaseTest {
     }
 
     public static Stream<Arguments> transferCorrectData() {
+        double maxAllowBalance = 5000.0;
         return Stream.of(
-                Arguments.of(0.01),
-                Arguments.of(5000.0),
-                Arguments.of(10000.0)
+                Arguments.of(0.01, maxAllowBalance),
+                Arguments.of(5000.0, maxAllowBalance),
+                Arguments.of(10000.0, maxAllowBalance)
         );
     }
 
     @MethodSource("transferCorrectData")
-    @ParameterizedTest
-    public void userMoneyTransferWithCorrectData(double correctBalance) {
-        double maxAllowBalance = 5000.0;
+    @ParameterizedTest(name = "invalidBalance={0}, maxAllowBalance={1}")
+    public void userMoneyTransferWithCorrectData(double correctBalance, double maxAllowBalance) {
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         Integer senderAccountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequestSender);
@@ -66,7 +67,7 @@ public class UserMoneyTransferTest extends BaseTest {
 
     @Test
     public void userTransferMoneyMoreDepositAmount() {
-        double balance = 2500.0;
+        double balance = RandomData.getRandomRandomDecimalDeposit();
         double doubleBalance = balance * 2;
 
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();
@@ -78,13 +79,12 @@ public class UserMoneyTransferTest extends BaseTest {
 
         UserSteps.failTransferMoneyAmongAccountsId(userRequestSenderUser, accountIdSenderUser,
                 accountIdReceiverUser, doubleBalance,
-                ResponseSpecs.requestReturnsBadRequestWithText(
-                        "Invalid transfer: insufficient funds or invalid accounts"));
+                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()));
     }
 
     @Test
     public void userTransferMoneyYourAccounts() {
-        double balance = 1500.0;
+        double balance = RandomData.getRandomRandomDecimalDeposit();
 
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();
         Integer accountIdSenderUser = UserSteps.createAccountsAndGetAccountsId(userRequestSenderUser);

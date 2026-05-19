@@ -43,6 +43,6 @@ public class UserUpdateCustomProfileTest extends BaseTest {
         UserSteps.createAccountsAndGetAccountsId(userRequestSenderUser);
 
         UserSteps.failUpdateCustomerProfile(userRequestSenderUser, invalidName,
-                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.PERSON_NAME_VALIDATION_ERROR.toString()));
+                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.PERSON_NAME_VALIDATION_ERROR.getMessage()));
     }
 }
