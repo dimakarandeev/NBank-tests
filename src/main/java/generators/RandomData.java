@@ -6,8 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomData {
 
-    private RandomData() {
-    }
+    private RandomData() {}
 
     public static String getUsername() {
         return RandomStringUtils.randomAlphabetic(10);
