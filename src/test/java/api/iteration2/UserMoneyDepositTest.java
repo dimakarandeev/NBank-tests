@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
 import requests.steps.UserSteps;
+import specs.BankAPIAlert;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
@@ -33,9 +34,9 @@ public class UserMoneyDepositTest extends BaseTest {
 
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
-                Arguments.of(-100.0, "Deposit amount must be at least 0.01"),
-                Arguments.of(0.0, "Deposit amount must be at least 0.01"),
-                Arguments.of(5001.0, "Deposit amount cannot exceed 5000")
+                Arguments.of(-100.0, BankAPIAlert.AMOUNT_TOO_SMALL),
+                Arguments.of(0.0, BankAPIAlert.AMOUNT_TOO_SMALL),
+                Arguments.of(5001.0, BankAPIAlert.AMOUNT_TOO_LARGE)
         );
     }
 
@@ -63,7 +64,7 @@ public class UserMoneyDepositTest extends BaseTest {
         UserSteps.failDepositToUserAccount(userRequestSender,
                 receiverAccountIdUser,
                 deposit,
-                ResponseSpecs.requestReturnForbidden("Unauthorized access to account"));
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.toString()));
     }
 
     // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
@@ -78,6 +79,6 @@ public class UserMoneyDepositTest extends BaseTest {
         UserSteps.failDepositToUserAccount(userRequest,
                 idNotExistUser,
                 deposit,
-                ResponseSpecs.requestReturnForbidden("Unauthorized access to account"));
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.toString()));
     }
 }
