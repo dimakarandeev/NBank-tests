@@ -2,14 +2,20 @@ package api.iteration2;
 
 import api.BaseTest;
 import generators.RandomData;
+import io.restassured.specification.RequestSpecification;
+import models.AddUserDepositRequest;
+import models.CreateAccountResponse;
 import models.CreateUserRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import requests.skelethon.Endpoint;
+import requests.skelethon.requesters.CrudRequester;
+import requests.skelethon.requesters.ValidatedCrudRequester;
 import requests.steps.AdminSteps;
-import requests.steps.UserSteps;
 import specs.BankAPIAlert;
+import specs.RequestSpecs;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
@@ -28,9 +34,23 @@ public class UserMoneyDepositTest extends BaseTest {
     @ParameterizedTest
     public void userAddDepositWithCorrectData(double balance) {
         CreateUserRequest userRequest = AdminSteps.createUser();
-        Integer accountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
+        RequestSpecification requestSpecification = RequestSpecs.authAsUser(
+                userRequest.getUsername(), userRequest.getPassword());
 
-        UserSteps.successDepositToUserAccount(userRequest, accountIdUser, balance);
+        CreateAccountResponse createAccountResponse = new ValidatedCrudRequester<CreateAccountResponse>(
+                requestSpecification,
+                Endpoint.ACCOUNTS,
+                ResponseSpecs.entityWasCreated())
+                .post(null);
+
+        Integer accountId = createAccountResponse.getId();
+        new CrudRequester(requestSpecification,
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnsOK())
+                .post(AddUserDepositRequest.builder()
+                        .id(accountId)
+                        .balance(balance)
+                        .build());
     }
 
     public static Stream<Arguments> depositInvalidData() {
@@ -41,45 +61,85 @@ public class UserMoneyDepositTest extends BaseTest {
         );
     }
 
-    // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @MethodSource("depositInvalidData")
     @ParameterizedTest
     public void userAddDepositWithInvalidData(double balance, String errorValue) {
         CreateUserRequest userRequest = AdminSteps.createUser();
-        Integer accountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
 
-        UserSteps.failDepositToUserAccount(userRequest, accountIdUser, balance,
-                ResponseSpecs.requestReturnsBadRequestWithText(errorValue));
+        RequestSpecification requestSpecification = RequestSpecs.authAsUser(
+                userRequest.getUsername(), userRequest.getPassword());
+
+        CreateAccountResponse createAccountResponse = new ValidatedCrudRequester<CreateAccountResponse>(
+                requestSpecification,
+                Endpoint.ACCOUNTS,
+                ResponseSpecs.entityWasCreated())
+                .post(null);
+
+        Integer accountId = createAccountResponse.getId();
+
+        new CrudRequester(requestSpecification,
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
+                .post(AddUserDepositRequest.builder()
+                        .id(accountId)
+                        .balance(balance)
+                        .build());
     }
 
-    // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
     public void userAddDepositOtherUser() {
         double deposit = RandomData.getRandomRandomDecimalDeposit();
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
-        UserSteps.createAccountsAndGetAccountsId(userRequestSender);
+        RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
+                userRequestSender.getUsername(), userRequestSender.getPassword());
+        new ValidatedCrudRequester<CreateAccountResponse>(
+                requestSpecificationSender,
+                Endpoint.ACCOUNTS,
+                ResponseSpecs.entityWasCreated())
+                .post(null);
 
         CreateUserRequest userRequestReceiver = AdminSteps.createUser();
-        Integer receiverAccountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequestReceiver);
+        RequestSpecification requestSpecificationReceiver = RequestSpecs.authAsUser(
+                userRequestReceiver.getUsername(), userRequestReceiver.getPassword());
+        CreateAccountResponse createAccountReceiverResponse = new ValidatedCrudRequester<CreateAccountResponse>(
+                requestSpecificationReceiver,
+                Endpoint.ACCOUNTS,
+                ResponseSpecs.entityWasCreated())
+                .post(null);
 
-        UserSteps.failDepositToUserAccount(userRequestSender,
-                receiverAccountIdUser,
-                deposit,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()));
+        Integer accountIdReceiver = createAccountReceiverResponse.getId();
+        new CrudRequester(requestSpecificationSender,
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+                .post(AddUserDepositRequest.builder()
+                        .id(accountIdReceiver)
+                        .balance(deposit)
+                        .build());
     }
 
-    // Необходимо уточнить у разработчика, должен возвращаться JSON в ответе или String
     @Test
     public void userAddDepositNotExistUser() {
         double deposit = RandomData.getRandomRandomDecimalDeposit();
 
         CreateUserRequest userRequest = AdminSteps.createUser();
-        Integer receiverAccountIdUser = UserSteps.createAccountsAndGetAccountsId(userRequest);
+        RequestSpecification requestSpecification = RequestSpecs.authAsUser(
+                userRequest.getUsername(), userRequest.getPassword());
 
-        UserSteps.failDepositToUserAccount(userRequest,
-                -Math.abs(receiverAccountIdUser),
-                deposit,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()));
+        CreateAccountResponse createAccountResponse = new ValidatedCrudRequester<CreateAccountResponse>(
+                requestSpecification,
+                Endpoint.ACCOUNTS,
+                ResponseSpecs.entityWasCreated())
+                .post(null);
+
+        Integer accountId = createAccountResponse.getId();
+
+        new CrudRequester(requestSpecification,
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+                .post(AddUserDepositRequest.builder()
+                        .id(-Math.abs(accountId))
+                        .balance(deposit)
+                        .build());
     }
 }
