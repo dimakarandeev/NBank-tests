@@ -19,12 +19,14 @@ import specs.ResponseSpecs;
 
 public class UserSteps {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+
     public static void createAccounts(CreateUserRequest userRequest) {
         new CrudRequester(RequestSpecs.unauthSpec(),
                 Endpoint.LOGIN,
                 ResponseSpecs.requestReturnsOK())
                 .post(LoginUserRequest.builder().username(userRequest.getUsername()).password(userRequest.getPassword()).build())
-                .header("Authorization", Matchers.notNullValue());
+                .header(AUTHORIZATION_HEADER, Matchers.notNullValue());
     }
 
     public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
