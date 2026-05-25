@@ -30,9 +30,7 @@ public class UserSteps {
     }
 
     public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
-        RequestSpecification authSpec = authSpec(userRequest);
-
-        return new CrudRequester(authSpec,
+        return new CrudRequester(authSpec(userRequest),
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null)
@@ -41,9 +39,7 @@ public class UserSteps {
     }
 
     public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {
-        RequestSpecification authSpec = authSpec(userRequest);
-
-        new CrudRequester(authSpec,
+        new CrudRequester(authSpec(userRequest),
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
                 .post(AddUserDepositRequest.builder()
@@ -56,9 +52,7 @@ public class UserSteps {
                                                 Integer accountIdUser,
                                                 double balance,
                                                 ResponseSpecification responseSpecs) {
-        RequestSpecification authSpec = authSpec(userRequest);
-
-        new CrudRequester(authSpec,
+        new CrudRequester(authSpec(userRequest),
                 Endpoint.DEPOSIT,
                 responseSpecs)
                 .post(AddUserDepositRequest.builder()
