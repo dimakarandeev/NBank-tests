@@ -19,6 +19,9 @@ public abstract class BasePage<T extends BasePage> {
     protected SelenideElement usernameInput = $(Selectors.byAttribute("placeholder", "Username"));
     protected SelenideElement passwordInput = $(Selectors.byAttribute("placeholder", "Password"));
 
+    protected SelenideElement amountMoneyInput = $(Selectors.byAttribute("placeholder", "Enter amount"));
+    protected SelenideElement selectedAccountSender = $("#form-control.account-selector");
+
 
     public abstract String url();
 
