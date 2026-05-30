@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class DepositMoneyPage extends BasePage<UserDashboard> {
 
-    private SelenideElement buttonAddDeposit = $(Selectors.byText("\uD83D\uDCB0 Deposit Money"));
+    private SelenideElement buttonAddDeposit = $(Selectors.byText("\uD83D\uDCB5 Deposit"));
 
     @Override
     public String url() {
@@ -18,10 +18,14 @@ public class DepositMoneyPage extends BasePage<UserDashboard> {
     public DepositMoneyPage addDepositMoney(String accountNumber, String depositMoney) {
         selectedAccountSender.shouldBe(Condition.visible, Condition.enabled)
                         .selectOptionContainingText(accountNumber);
-        amountMoneyInput.shouldBe(Condition.visible, Condition.enabled)
-                        .sendKeys(depositMoney);
-        buttonAddDeposit.shouldBe(Condition.visible, Condition.enabled)
-                .click();
+        amountMoneyInput.sendKeys(depositMoney);
+        buttonAddDeposit.shouldBe(Condition.visible, Condition.enabled).click();
+        return this;
+    }
+
+    public DepositMoneyPage addDepositMoneyLessAccountSelection(String depositMoney) {
+        amountMoneyInput.sendKeys(depositMoney);
+        buttonAddDeposit.shouldBe(Condition.visible, Condition.enabled).click();
         return this;
     }
 }
