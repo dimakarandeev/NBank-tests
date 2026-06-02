@@ -5,6 +5,7 @@ import io.restassured.specification.RequestSpecification;
 import models.CreateAccountResponse;
 import models.CreateUserRequest;
 import models.comparison.ModelAssertions;
+import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
 import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ import specs.RequestSpecs;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class UserUpdateCustomProfileTest extends BaseTest {
 
@@ -45,11 +49,20 @@ public class UserUpdateCustomProfileTest extends BaseTest {
         UpdateCustomerProfileResponse updateCustomerProfileResponse =
                 new ValidatedCrudRequester<UpdateCustomerProfileResponse>(
                         requestSpecification,
-                        Endpoint.CUSTOMER_PROFILE,
+                        Endpoint.UPDATE_CUSTOMER_PROFILE,
                         ResponseSpecs.requestReturnsOK())
                         .put(updateCustomerProfileRequest);
 
         ModelAssertions.assertThatModels(updateCustomerProfileRequest, updateCustomerProfileResponse).match();
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecification,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        assertEquals(updateProfileName, getCustomerProfileResponse.getName());
     }
 
     public static Stream<Arguments> nameInvalidData() {
@@ -79,10 +92,19 @@ public class UserUpdateCustomProfileTest extends BaseTest {
                 .post(null);
 
         new CrudRequester(requestSpecification,
-                Endpoint.CUSTOMER_PROFILE,
+                Endpoint.UPDATE_CUSTOMER_PROFILE,
                 ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.PERSON_NAME_VALIDATION_ERROR.getMessage()))
                 .put(UpdateCustomerProfileRequest.builder()
                         .name(invalidName)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecification,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        assertNotEquals(invalidName, getCustomerProfileResponse.getName());
     }
 }

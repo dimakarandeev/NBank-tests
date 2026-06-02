@@ -5,6 +5,7 @@ import lombok.Getter;
 import models.*;
 import models.modelTransferUserDeposit.TransferUserDepositRequest;
 import models.modelTransferUserDeposit.TransferUserDepositResponse;
+import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
 import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 
@@ -42,10 +43,16 @@ public enum Endpoint {
             TransferUserDepositResponse.class
     ),
 
-    CUSTOMER_PROFILE(
+    UPDATE_CUSTOMER_PROFILE(
             "/customer/profile",
             UpdateCustomerProfileRequest.class,
             UpdateCustomerProfileResponse.class
+    ),
+
+    GET_CUSTOMER_PROFILE(
+            "/customer/profile",
+            BaseModel.class,
+            GetCustomerProfileResponse.class
     );
 
 

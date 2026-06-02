@@ -84,6 +84,8 @@ public class UserMoneyDepositTest extends BaseTest {
                         .id(accountId)
                         .balance(balance)
                         .build());
+
+
     }
 
     @Test

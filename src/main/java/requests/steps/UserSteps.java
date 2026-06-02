@@ -101,7 +101,7 @@ public class UserSteps {
         UpdateCustomerProfileRequest updateCustomerProfileRequest = buildUpdateProfileRequest(name);
 
         new CrudRequester(authSpec,
-                Endpoint.CUSTOMER_PROFILE,
+                Endpoint.UPDATE_CUSTOMER_PROFILE,
                 responseSpecs)
                 .put(updateCustomerProfileRequest);
     }
@@ -113,7 +113,7 @@ public class UserSteps {
         UpdateCustomerProfileResponse updateCustomerProfileResponse =
                 new ValidatedCrudRequester<UpdateCustomerProfileResponse>(
                         authSpec,
-                        Endpoint.CUSTOMER_PROFILE,
+                        Endpoint.UPDATE_CUSTOMER_PROFILE,
                         ResponseSpecs.requestReturnsOK())
                         .put(updateCustomerProfileRequest);
 
