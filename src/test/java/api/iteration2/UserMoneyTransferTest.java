@@ -20,6 +20,7 @@ import requests.steps.AdminSteps;
 import specs.BankAPIAlert;
 import specs.RequestSpecs;
 import specs.ResponseSpecs;
+import utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,15 +100,15 @@ public class UserMoneyTransferTest extends BaseTest {
                 .post(null);
 
         Integer accountIdSender = createAccountSenderResponse.getId();
-        for (int i = 0; i < 2; i++) {
-            new CrudRequester(requestSpecificationSender,
-                    Endpoint.DEPOSIT,
-                    ResponseSpecs.requestReturnsOK())
-                    .post(AddUserDepositRequest.builder()
-                            .id(accountIdSender)
-                            .balance(maxAllowBalance)
-                            .build());
-        }
+
+        TestUtils.repeat(2, () ->
+                new CrudRequester(requestSpecificationSender,
+                        Endpoint.DEPOSIT,
+                        ResponseSpecs.requestReturnsOK())
+                        .post(AddUserDepositRequest.builder()
+                                .id(accountIdSender)
+                                .balance(maxAllowBalance)
+                                .build()));
 
         CreateUserRequest userRequestReceiver = AdminSteps.createUser();
         RequestSpecification requestSpecificationReceiver = RequestSpecs.authAsUser(
@@ -186,14 +187,14 @@ public class UserMoneyTransferTest extends BaseTest {
         RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
                 userRequestSender.getUsername(), userRequestSender.getPassword());
 
-        for (int i = 0; i < 2; i++) {
+        TestUtils.repeat(2, () -> {
             CreateAccountResponse createAccountSenderResponse = new ValidatedCrudRequester<CreateAccountResponse>(
                     requestSpecificationSender,
                     Endpoint.ACCOUNTS,
                     ResponseSpecs.entityWasCreated())
                     .post(null);
             accountSenderResponseList.add(createAccountSenderResponse.getId());
-        }
+        });
 
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
