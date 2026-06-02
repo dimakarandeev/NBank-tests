@@ -41,7 +41,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountId = createAccountResponse.getId();
         new CrudRequester(requestSpecification,
