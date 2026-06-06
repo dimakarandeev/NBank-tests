@@ -9,6 +9,8 @@ import models.CreateUserRequest;
 import models.comparison.ModelAssertions;
 import models.modelTransferUserDeposit.TransferUserDepositRequest;
 import models.modelTransferUserDeposit.TransferUserDepositResponse;
+import models.modelUpdateCustomerProfile.Account;
+import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,14 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class UserMoneyTransferTest extends BaseTest {
 
     public static Stream<Arguments> transferInvalidData() {
         double maxAllowBalance = 5000.0;
         return Stream.of(
-                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
-                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
-                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage())
+                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
+                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
+                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MAX_EXCEEDED.getMessage())
         );
     }
 
@@ -76,6 +80,20 @@ public class UserMoneyTransferTest extends BaseTest {
                         .receiverAccountId(accountIdReceiver)
                         .amount(invalidBalance)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecificationSender,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountIdSender))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
+
+        assertEquals(maxAllowBalance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
     }
 
     public static Stream<Arguments> transferCorrectData() {
@@ -133,6 +151,20 @@ public class UserMoneyTransferTest extends BaseTest {
                         .post(transferUserDepositRequest);
 
         ModelAssertions.assertThatModels(transferUserDepositRequest, transferUserDepositResponse).match();
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecificationReceiver,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountIdReceiver))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
+
+        assertEquals(correctBalance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
     }
 
     @Test
@@ -176,6 +208,20 @@ public class UserMoneyTransferTest extends BaseTest {
                         .receiverAccountId(accountIdReceiver)
                         .amount(doubleBalance)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecificationSender,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountIdSender))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
+
+        assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
     }
 
     @Test
@@ -196,17 +242,20 @@ public class UserMoneyTransferTest extends BaseTest {
             accountSenderResponseList.add(createAccountSenderResponse.getId());
         });
 
+        Integer accountIdSender = accountSenderResponseList.get(0);
+        Integer accountIdReceiver = accountSenderResponseList.get(1);
+
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
                 .post(AddUserDepositRequest.builder()
-                        .id(accountSenderResponseList.get(0))
+                        .id(accountIdSender)
                         .balance(balance)
                         .build());
 
         TransferUserDepositRequest transferUserDepositRequest = TransferUserDepositRequest.builder()
-                .senderAccountId(accountSenderResponseList.get(0))
-                .receiverAccountId(accountSenderResponseList.get(1))
+                .senderAccountId(accountIdSender)
+                .receiverAccountId(accountIdReceiver)
                 .amount(balance)
                 .build();
 
@@ -217,5 +266,19 @@ public class UserMoneyTransferTest extends BaseTest {
                         .post(transferUserDepositRequest);
 
         ModelAssertions.assertThatModels(transferUserDepositRequest, transferUserDepositResponse).match();
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecificationSender,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountIdReceiver))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
+
+        assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
     }
 }

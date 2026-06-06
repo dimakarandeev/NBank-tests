@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Account {
-    private int id;
+    private Integer id;
     private String accountNumber;
     private double balance;
     private List<Transaction> transactions;

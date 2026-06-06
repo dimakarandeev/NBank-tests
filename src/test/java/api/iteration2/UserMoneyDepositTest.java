@@ -6,6 +6,8 @@ import io.restassured.specification.RequestSpecification;
 import models.AddUserDepositRequest;
 import models.CreateAccountResponse;
 import models.CreateUserRequest;
+import models.modelUpdateCustomerProfile.Account;
+import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +21,8 @@ import specs.RequestSpecs;
 import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserMoneyDepositTest extends BaseTest {
 
@@ -51,13 +55,27 @@ public class UserMoneyDepositTest extends BaseTest {
                         .id(accountId)
                         .balance(balance)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecification,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
+
+        assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountId + " должен измениться");
     }
 
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
-                Arguments.of(-100.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
-                Arguments.of(0.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
-                Arguments.of(5001.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage())
+                Arguments.of(-100.0, BankAPIAlert.DEPOSIT_AMOUNT_MIN_REQUIRED.getMessage()),
+                Arguments.of(0.0, BankAPIAlert.DEPOSIT_AMOUNT_MIN_REQUIRED.getMessage()),
+                Arguments.of(5001.0, BankAPIAlert.DEPOSIT_AMOUNT_MAX_EXCEEDED.getMessage())
         );
     }
 
@@ -85,7 +103,19 @@ public class UserMoneyDepositTest extends BaseTest {
                         .balance(balance)
                         .build());
 
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecification,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
 
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
+
+        assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
     }
 
     @Test
@@ -95,11 +125,13 @@ public class UserMoneyDepositTest extends BaseTest {
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
                 userRequestSender.getUsername(), userRequestSender.getPassword());
-        new ValidatedCrudRequester<CreateAccountResponse>(
+        CreateAccountResponse createAccountSenderResponse = new ValidatedCrudRequester<CreateAccountResponse>(
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null);
+
+        Integer accountIdSender = createAccountSenderResponse.getId();
 
         CreateUserRequest userRequestReceiver = AdminSteps.createUser();
         RequestSpecification requestSpecificationReceiver = RequestSpecs.authAsUser(
@@ -118,6 +150,20 @@ public class UserMoneyDepositTest extends BaseTest {
                         .id(accountIdReceiver)
                         .balance(deposit)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecificationSender,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountIdSender))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
+
+        assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
     }
 
     @Test
@@ -143,5 +189,19 @@ public class UserMoneyDepositTest extends BaseTest {
                         .id(-Math.abs(accountId))
                         .balance(deposit)
                         .build());
+
+        GetCustomerProfileResponse getCustomerProfileResponse =
+                new ValidatedCrudRequester<GetCustomerProfileResponse>(
+                        requestSpecification,
+                        Endpoint.GET_CUSTOMER_PROFILE,
+                        ResponseSpecs.requestReturnsOK())
+                        .get();
+
+        Account account = getCustomerProfileResponse.getAccounts().stream()
+                .filter(acc -> acc.getId().equals(accountId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
+
+        assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
     }
 }
