@@ -23,6 +23,10 @@ public class UserUpdateCustomProfileTest extends BaseUiTest {
         new EditProfilePage()
                 .updatedNameUser(newCorrectNameUser)
                 .checkAlertMessageAndAccept(BankAlert.EDIT_PROFILE_SUCCESSFULLY.getMessage());
+
+        new UserDashboard().open();
+        new UserDashboard().getWelcomeText()
+                .shouldBe(Condition.visible).shouldHave(Condition.text(String.format("Welcome, %s!", newCorrectNameUser)));
     }
 
     @Test
@@ -36,5 +40,9 @@ public class UserUpdateCustomProfileTest extends BaseUiTest {
         new EditProfilePage()
                 .updateNameUserLessName()
                 .checkAlertMessageAndAccept(BankAlert.EDIT_PROFILE_INVALID_DATA.getMessage());
+
+        new UserDashboard().open();
+        new UserDashboard().getWelcomeText()
+                .shouldBe(Condition.visible).shouldHave(Condition.text("Welcome, noname!"));
     }
 }

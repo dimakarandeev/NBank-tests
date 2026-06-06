@@ -4,7 +4,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 
+import java.util.List;
+
 import static com.codeborne.selenide.Selenide.$;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DepositMoneyPage extends BasePage<UserDashboard> {
 
@@ -17,7 +20,7 @@ public class DepositMoneyPage extends BasePage<UserDashboard> {
 
     public DepositMoneyPage addDepositMoney(String accountNumber, String depositMoney) {
         selectedAccountSender.shouldBe(Condition.visible, Condition.enabled)
-                        .selectOptionContainingText(accountNumber);
+                .selectOptionContainingText(accountNumber);
         amountMoneyInput.sendKeys(depositMoney);
         buttonAddDeposit.shouldBe(Condition.visible, Condition.enabled).click();
         return this;
@@ -26,6 +29,26 @@ public class DepositMoneyPage extends BasePage<UserDashboard> {
     public DepositMoneyPage addDepositMoneyLessAccountSelection(String depositMoney) {
         amountMoneyInput.sendKeys(depositMoney);
         buttonAddDeposit.shouldBe(Condition.visible, Condition.enabled).click();
+        return this;
+    }
+
+    public DepositMoneyPage checkDepositMoneyAccount(String numberAccount, String fullExpected) {
+        List<SelenideElement> matchingOptions = selectedAccountSender
+                .shouldBe(Condition.visible, Condition.enabled)
+                .getOptions()
+                .stream()
+                .filter(opt -> opt.getText().startsWith(numberAccount))
+                .toList();
+
+        int count = matchingOptions.size();
+        assertEquals(1, count, "Ожидается ровно 1 опция, но найдено: " + count);
+
+        String foundText = matchingOptions.get(0)
+                .getText();
+
+        assertEquals(fullExpected, foundText,
+                "Текст опции '" + foundText + "' не совпадает с ожидаемым '" + fullExpected + "'");
+
         return this;
     }
 }

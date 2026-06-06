@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserMoneyDepositTest extends BaseUiTest {
 
-    private final String maxCorrectDepositMoney = "5000.0";
+    private final String maxCorrectDepositMoney = "5000.00";
     private final String depositInvalidData = "-100.0";
 
     @Test
@@ -33,6 +33,11 @@ public class UserMoneyDepositTest extends BaseUiTest {
 
         new UserDashboard().getWelcomeText()
                 .shouldBe(Condition.visible).shouldHave(Condition.text("Welcome, noname!"));
+
+        new DepositMoneyPage().open();
+        new DepositMoneyPage().checkDepositMoneyAccount(
+                userAccount,
+                String.format("%s (Balance: $%s)", userAccount, maxCorrectDepositMoney));
     }
 
     @Test
@@ -46,7 +51,12 @@ public class UserMoneyDepositTest extends BaseUiTest {
         new UserDashboard().createDepositMoney();
         new DepositMoneyPage()
                 .addDepositMoney(userAccount, depositInvalidData)
-                .checkAlertMessageAndAccept(BankAlert.DEPOSIT_MONEY_INVALID_DATA.getMessage());
+                .checkAlertMessageAndAccept(BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage());
+
+        new DepositMoneyPage().open();
+        new DepositMoneyPage().checkDepositMoneyAccount(
+                userAccount,
+                String.format("%s (Balance: $0.00)", userAccount));
     }
 
     @Test

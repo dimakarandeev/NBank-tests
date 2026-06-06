@@ -13,6 +13,7 @@ public class MakeTransferMoney extends BasePage<MakeTransferMoney> {
     private SelenideElement selectedAccountReceiver = $(Selectors.byAttribute(
             "placeholder", "Enter recipient account number"));
     private SelenideElement buttonSendTransfer = $(Selectors.byText("\uD83D\uDE80 Send Transfer"));
+    private SelenideElement checkBoxConfirmCheck = $(Selectors.byId("confirmCheck"));
 
     @Override
     public String url() {
@@ -28,9 +29,11 @@ public class MakeTransferMoney extends BasePage<MakeTransferMoney> {
         recipientNameInput.shouldBe(Condition.visible, Condition.enabled)
                 .sendKeys(recipientName);
         selectedAccountReceiver.shouldBe(Condition.visible, Condition.enabled)
-                .selectOptionContainingText(accountNumberReceiver);
+                .sendKeys(accountNumberReceiver);
         amountMoneyInput.shouldBe(Condition.visible, Condition.enabled)
                 .sendKeys(depositMoney);
+        checkBoxConfirmCheck.shouldBe(Condition.visible, Condition.enabled)
+                .click();
         buttonSendTransfer.shouldBe(Condition.visible, Condition.enabled)
                 .click();
         return this;

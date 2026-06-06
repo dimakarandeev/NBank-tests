@@ -31,6 +31,12 @@ public class UserDashboard extends BasePage<UserDashboard> {
         return this;
     }
 
+    public UserDashboard createMakeTransfer() {
+        createNewTransferMoney.shouldBe(Condition.visible, Condition.enabled)
+                .click();
+        return this;
+    }
+
     public UserDashboard editProfile() {
         editProfile.click();
         return this;
