@@ -1,4 +1,4 @@
-package models;
+package models.modelUpdateCustomerProfile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateAccountResponse extends BaseModel {
+public class Account {
     private Integer id;
     private String accountNumber;
     private double balance;
-    private List<String> transactions;
+    private List<Transaction> transactions;
 }

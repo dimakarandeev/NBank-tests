@@ -8,7 +8,7 @@ import requests.skelethon.HttpRequest;
 import requests.skelethon.interfaces.CrudEndpointInterface;
 
 public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest implements CrudEndpointInterface {
-    private CrudRequester crudRequester;
+    private final CrudRequester crudRequester;
 
     public ValidatedCrudRequester(RequestSpecification requestSpecification, Endpoint endpoint, ResponseSpecification responseSpecification) {
         super(requestSpecification, endpoint, responseSpecification);
@@ -20,9 +20,22 @@ public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest imp
         return (T) crudRequester.post(model).extract().as(endpoint.getResponseModel());
     }
 
+    public T post() {
+        return post(null);
+    }
+
     @Override
-    public Object get(long id) {
-        return null;
+    public T put(BaseModel model) {
+        return (T) crudRequester.put(model).extract().as(endpoint.getResponseModel());
+    }
+
+    @Override
+    public T get(BaseModel model) {
+        return (T) crudRequester.get(model).extract().as(endpoint.getResponseModel());
+    }
+
+    public T get() {
+        return get(null);
     }
 
     @Override
