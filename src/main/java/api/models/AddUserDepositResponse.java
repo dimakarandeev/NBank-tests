@@ -1,4 +1,4 @@
-package api.models;
+package models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateAccountResponse extends BaseModel {
+public class AddUserDepositResponse extends BaseModel {
     private Integer id;
     private String accountNumber;
-    private double balance;
+    private Integer balance;
     private List<String> transactions;
 }

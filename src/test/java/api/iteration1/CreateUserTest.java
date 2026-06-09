@@ -1,5 +1,6 @@
-package iteration1;
+package api.iteration1;
 
+import api.BaseTest;
 import api.generators.RandomModelGenerator;
 import api.models.CreateUserRequest;
 import api.models.CreateUserResponse;

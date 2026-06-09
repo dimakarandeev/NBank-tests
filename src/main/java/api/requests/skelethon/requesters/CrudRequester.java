@@ -32,8 +32,27 @@ public class CrudRequester extends HttpRequest implements CrudEndpointInterface,
     }
 
     @Override
-    public Object get(long id) {
-        return null;
+    public ValidatableResponse put(BaseModel model){
+        var body = model == null ? "" : model;
+        return given()
+                .spec(requestSpecification)
+                .body(body)
+                .put(endpoint.getUrl())
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
+    }
+
+    @Override
+    public ValidatableResponse get(BaseModel model) {
+        var body = model == null ? "" : model;
+        return given()
+                .spec(requestSpecification)
+                .body(body)
+                .get(endpoint.getUrl())
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
     }
 
     @Override
