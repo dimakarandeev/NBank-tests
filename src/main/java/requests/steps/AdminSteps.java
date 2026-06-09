@@ -1,12 +1,12 @@
 package requests.steps;
 
-import generators.RandomModelGenerator;
-import models.CreateUserRequest;
-import models.CreateUserResponse;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.ValidatedCrudRequester;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
+import api.generators.RandomModelGenerator;
+import api.models.CreateUserRequest;
+import api.models.CreateUserResponse;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
 
 public class AdminSteps {
 

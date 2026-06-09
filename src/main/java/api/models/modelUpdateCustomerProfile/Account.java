@@ -1,4 +1,4 @@
-package models.modelUpdateCustomerProfile;
+package api.models.modelUpdateCustomerProfile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

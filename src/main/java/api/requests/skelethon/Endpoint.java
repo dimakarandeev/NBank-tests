@@ -1,14 +1,13 @@
-package requests.skelethon;
+package api.requests.skelethon;
 
 import api.models.*;
+import api.models.modelTransferUserDeposit.TransferUserDepositRequest;
+import api.models.modelTransferUserDeposit.TransferUserDepositResponse;
+import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import models.*;
-import models.modelTransferUserDeposit.TransferUserDepositRequest;
-import models.modelTransferUserDeposit.TransferUserDepositResponse;
-import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 
 @Getter
 @AllArgsConstructor
@@ -47,6 +46,12 @@ public enum Endpoint {
             "/customer/profile",
             UpdateCustomerProfileRequest.class,
             UpdateCustomerProfileResponse.class
+    ),
+
+    CUSTOMER_ACCOUNTS(
+            "/customer/accounts",
+            BaseModel.class,
+            CreateAccountResponse.class
     ),
 
     GET_CUSTOMER_PROFILE(

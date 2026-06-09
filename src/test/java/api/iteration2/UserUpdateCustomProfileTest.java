@@ -1,24 +1,24 @@
 package api.iteration2;
 
 import api.BaseTest;
+import api.models.CreateAccountResponse;
+import api.models.CreateUserRequest;
+import api.models.comparison.ModelAssertions;
+import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.CrudRequester;
+import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
-import models.CreateAccountResponse;
-import models.CreateUserRequest;
-import models.comparison.ModelAssertions;
-import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.CrudRequester;
-import requests.skelethon.requesters.ValidatedCrudRequester;
 import requests.steps.AdminSteps;
 import specs.BankAPIAlert;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
 

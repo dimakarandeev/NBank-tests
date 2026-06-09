@@ -1,10 +1,10 @@
-package models.modelTransferUserDeposit;
+package api.models.modelTransferUserDeposit;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import models.BaseModel;
+import api.models.BaseModel;
 
 @Data
 @AllArgsConstructor
