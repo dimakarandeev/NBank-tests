@@ -39,7 +39,7 @@ public class UserUpdateCustomProfileTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         UpdateCustomerProfileRequest updateCustomerProfileRequest =
                 UpdateCustomerProfileRequest.builder()
@@ -89,7 +89,7 @@ public class UserUpdateCustomProfileTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         new CrudRequester(requestSpecification,
                 Endpoint.UPDATE_CUSTOMER_PROFILE,

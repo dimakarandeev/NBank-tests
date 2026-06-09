@@ -91,7 +91,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountId = createAccountResponse.getId();
 
@@ -129,7 +129,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdSender = createAccountSenderResponse.getId();
 
@@ -140,7 +140,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecificationReceiver,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -178,7 +178,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountId = createAccountResponse.getId();
 

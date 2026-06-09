@@ -51,7 +51,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdSender = createAccountSenderResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -69,7 +69,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationReceiver,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -115,7 +115,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdSender = createAccountSenderResponse.getId();
 
@@ -135,7 +135,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationReceiver,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdReceiver = createAccountReceiverResponse.getId();
         TransferUserDepositRequest transferUserDepositRequest = TransferUserDepositRequest.builder()
@@ -179,7 +179,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdSender = createAccountSenderResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -197,7 +197,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 requestSpecificationReceiver,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -238,7 +238,7 @@ public class UserMoneyTransferTest extends BaseTest {
                     requestSpecificationSender,
                     Endpoint.ACCOUNTS,
                     ResponseSpecs.entityWasCreated())
-                    .post(null);
+                    .post();
             accountSenderResponseList.add(createAccountSenderResponse.getId());
         });
 
