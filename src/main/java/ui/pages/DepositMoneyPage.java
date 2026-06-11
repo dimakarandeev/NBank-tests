@@ -9,7 +9,7 @@ import java.util.List;
 import static com.codeborne.selenide.Selenide.$;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DepositMoneyPage extends BasePage<UserDashboard> {
+public class DepositMoneyPage extends BasePage<DepositMoneyPage> {
 
     private SelenideElement buttonAddDeposit = $(Selectors.byText("\uD83D\uDCB5 Deposit"));
 
@@ -32,7 +32,7 @@ public class DepositMoneyPage extends BasePage<UserDashboard> {
         return this;
     }
 
-    public DepositMoneyPage checkDepositMoneyAccount(String numberAccount, String fullExpected) {
+    public DepositMoneyPage checkDepositMoneyAccount(String numberAccount, String sumExpected) {
         List<SelenideElement> matchingOptions = selectedAccountSender
                 .shouldBe(Condition.visible, Condition.enabled)
                 .getOptions()
@@ -43,12 +43,13 @@ public class DepositMoneyPage extends BasePage<UserDashboard> {
         int count = matchingOptions.size();
         assertEquals(1, count, "Ожидается ровно 1 опция, но найдено: " + count);
 
-        String foundText = matchingOptions.get(0)
-                .getText();
+        String foundText = matchingOptions.get(0).getText();
 
-        assertEquals(fullExpected, foundText,
-                "Текст опции '" + foundText + "' не совпадает с ожидаемым '" + fullExpected + "'");
-
+        String fullExpected = String.format(DepositMoneyBalance.DEPOSIT_MONEY_BALANCE.getMoneyBalance(), numberAccount, sumExpected);
+        assertEquals(
+                String.format(DepositMoneyBalance.DEPOSIT_MONEY_BALANCE.getMoneyBalance(), numberAccount, fullExpected),
+                foundText,
+                "Депозит '" + foundText + "' не совпадает с ожидаемым '" + fullExpected + "'");
         return this;
     }
 }

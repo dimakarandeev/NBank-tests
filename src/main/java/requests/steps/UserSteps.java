@@ -1,6 +1,7 @@
 package requests.steps;
 
 import api.models.AddUserDepositRequest;
+import api.models.CreateAccountResponse;
 import api.models.CreateUserRequest;
 import api.models.LoginUserRequest;
 import api.models.comparison.ModelAssertions;
@@ -21,7 +22,7 @@ public class UserSteps {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
-    public static void createAccounts(CreateUserRequest userRequest) {
+    public void createAccounts(CreateUserRequest userRequest) {
         new CrudRequester(RequestSpecs.unauthSpec(),
                 Endpoint.LOGIN,
                 ResponseSpecs.requestReturnsOK())
@@ -30,12 +31,11 @@ public class UserSteps {
     }
 
     public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
-        return new CrudRequester(authSpec(userRequest),
+        return Integer.valueOf(new CrudRequester(authSpec(userRequest),
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null)
-                .extract()
-                .response().getBody().jsonPath().getInt("id");
+                .extract().as(CreateAccountResponse.class).getAccountNumber());
     }
 
     public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {

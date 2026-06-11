@@ -18,137 +18,273 @@ public class UserMoneyTransferTest extends BaseUiTest {
     @Test
     @UserSession(value = 2)
     public void userMoneyTransferWithInvalidData() {
-        new UserDashboard().open().createNewAccount();
+
+        new UserDashboard()
+                .open()
+                .createNewAccount();
+
         List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
         String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
 
-
         BasePage.authAsUser(SessionStorage.getUser(2));
-        new UserDashboard().open().createNewAccount();
+
+        new UserDashboard()
+                .open()
+                .createNewAccount();
+
         List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
         String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
 
-
-        new UserDashboard().createDepositMoney();
-        new DepositMoneyPage()
+        new UserDashboard()
+                .createDepositMoney()
+                .goTo(DepositMoneyPage.class)
                 .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(String.format(
-                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
-
-
-        new UserDashboard().createMakeTransfer();
-        new MakeTransferMoney()
+                .checkAlertMessageAndAccept(String.format(BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(),
+                        maxCorrectDepositMoney, userAccountSender))
+                .goTo(UserDashboard.class)
+                .createMakeTransfer()
+                .goTo(MakeTransferMoney.class)
                 .sendTransferMoney(
                         userAccountSender,
                         "John Cena",
                         userAccountReceiver,
                         depositInvalidData)
-                .checkAlertMessageAndAccept(BankAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage());
+                .checkAlertMessageAndAccept(BankAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage())
+                .goTo(DepositMoneyPage.class)
+                .open()
+                .checkDepositMoneyAccount(userAccountSender,
+                        String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
 
 
-        new DepositMoneyPage().open();
-        new DepositMoneyPage().checkDepositMoneyAccount(
-                userAccountSender,
-                String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
+//        String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
+//
+//
+//        BasePage.authAsUser(SessionStorage.getUser(2));
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
+//        String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
+//
+//
+//        new UserDashboard().createDepositMoney();
+//        new DepositMoneyPage()
+//                .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(String.format(
+//                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
+//
+//
+//        new UserDashboard().createMakeTransfer();
+//        new MakeTransferMoney()
+//                .sendTransferMoney(
+//                        userAccountSender,
+//                        "John Cena",
+//                        userAccountReceiver,
+//                        depositInvalidData)
+//                .checkAlertMessageAndAccept(BankAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage());
+//
+//
+//        new DepositMoneyPage().open();
+//        new DepositMoneyPage().checkDepositMoneyAccount(
+//                userAccountSender,
+//                String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
     }
 
     @Test
     @UserSession(value = 2)
     public void userMoneyTransferWithCorrectData() {
-        new UserDashboard().open().createNewAccount();
         List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
         String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
 
+        new UserDashboard()
+                .open()
+                .createNewAccount();
+
         BasePage.authAsUser(SessionStorage.getUser(2));
-        new UserDashboard().open().createNewAccount();
         List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
         String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
 
-        new UserDashboard().createDepositMoney();
-        new DepositMoneyPage()
+        new UserDashboard()
+                .createDepositMoney()
+                .goTo(DepositMoneyPage.class)
                 .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(String.format(
-                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
-
-        new UserDashboard().createMakeTransfer();
-        new MakeTransferMoney()
+                .checkAlertMessageAndAccept(String.format(BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(),
+                        maxCorrectDepositMoney, userAccountSender))
+                .goTo(UserDashboard.class)
+                .createMakeTransfer()
+                .goTo(MakeTransferMoney.class)
                 .sendTransferMoney(
                         userAccountSender,
                         "John Cena",
                         userAccountReceiver,
                         maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(
-                        String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(), maxCorrectDepositMoney, userAccountReceiver));
+                .checkAlertMessageAndAccept(String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(),
+                        maxCorrectDepositMoney, userAccountReceiver))
+                .goTo(DepositMoneyPage.class)
+                .checkDepositMoneyAccount(userAccountSender, String.format("%s (Balance: $0.00)", userAccountSender));
 
-        new DepositMoneyPage().open();
-        new DepositMoneyPage().checkDepositMoneyAccount(
-                userAccountSender,
-                String.format("%s (Balance: $0.00)", userAccountSender));
+
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
+//        String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
+//
+//        BasePage.authAsUser(SessionStorage.getUser(2));
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
+//        String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
+//
+//        new UserDashboard().createDepositMoney();
+//        new DepositMoneyPage()
+//                .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(String.format(
+//                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
+//
+//        new UserDashboard().createMakeTransfer();
+//        new MakeTransferMoney()
+//                .sendTransferMoney(
+//                        userAccountSender,
+//                        "John Cena",
+//                        userAccountReceiver,
+//                        maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(
+//                        String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(), maxCorrectDepositMoney, userAccountReceiver));
+//
+//        new DepositMoneyPage().open();
+//        new DepositMoneyPage().checkDepositMoneyAccount(
+//                userAccountSender,
+//                String.format("%s (Balance: $0.00)", userAccountSender));
     }
 
     @Test
     @UserSession(value = 2)
     public void userTransferMoneyMoreDepositAmount() {
-        new UserDashboard().open().createNewAccount();
         List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
         String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
 
-        BasePage.authAsUser(SessionStorage.getUser(2));
-        new UserDashboard().open().createNewAccount();
+        new UserDashboard()
+                .open()
+                .createNewAccount();
+
         List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
         String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
 
-        new UserDashboard().createDepositMoney();
-        new DepositMoneyPage()
+        new UserDashboard()
+                .open()
+                .createNewAccount()
+                .createDepositMoney()
+                .goTo(DepositMoneyPage.class)
                 .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(String.format(
-                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
-
-        new UserDashboard().createMakeTransfer();
-        new MakeTransferMoney()
+                .checkAlertMessageAndAccept(String.format(BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(),
+                        maxCorrectDepositMoney, userAccountSender))
+                .goTo(UserDashboard.class)
+                .createMakeTransfer()
+                .goTo(MakeTransferMoney.class)
                 .sendTransferMoney(
                         userAccountSender,
                         "John Cena",
                         userAccountReceiver,
                         doubleBalance)
-                .checkAlertMessageAndAccept(BankAlert.TRANSFER_INVALID_INSUFFICIENT_FUNDS.getMessage());
+                .checkAlertMessageAndAccept(BankAlert.TRANSFER_INVALID_INSUFFICIENT_FUNDS.getMessage())
+                .goTo(DepositMoneyPage.class)
+                .open()
+                .checkDepositMoneyAccount(userAccountSender,
+                        String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
 
-        new DepositMoneyPage().open();
-        new DepositMoneyPage().checkDepositMoneyAccount(
-                userAccountSender,
-                String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
+
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
+//        String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
+//
+//        BasePage.authAsUser(SessionStorage.getUser(2));
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps(2).getAllAccounts();
+//        String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
+//
+//        new UserDashboard().createDepositMoney();
+//        new DepositMoneyPage()
+//                .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(String.format(
+//                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
+//
+//        new UserDashboard().createMakeTransfer();
+//        new MakeTransferMoney()
+//                .sendTransferMoney(
+//                        userAccountSender,
+//                        "John Cena",
+//                        userAccountReceiver,
+//                        doubleBalance)
+//                .checkAlertMessageAndAccept(BankAlert.TRANSFER_INVALID_INSUFFICIENT_FUNDS.getMessage());
+//
+//        new DepositMoneyPage().open();
+//        new DepositMoneyPage().checkDepositMoneyAccount(
+//                userAccountSender,
+//                String.format("%s (Balance: $%s)", userAccountSender, maxCorrectDepositMoney));
     }
 
     @Test
     @UserSession
     public void userTransferMoneyYourAccounts() {
-        new UserDashboard().open().createNewAccount();
         List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps().getAllAccounts();
         String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
 
-        new UserDashboard().open().createNewAccount();
+        new UserDashboard()
+                .open()
+                .createNewAccount();
+
         List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
         String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
 
-        new UserDashboard().createDepositMoney();
-        new DepositMoneyPage()
+        new UserDashboard()
+                .open()
+                .createNewAccount()
+                .createDepositMoney()
+                .goTo(DepositMoneyPage.class)
                 .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(String.format(
-                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
-
-        new UserDashboard().createMakeTransfer();
-        new MakeTransferMoney()
+                .checkAlertMessageAndAccept(String.format(BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(),
+                        maxCorrectDepositMoney, userAccountSender))
+                .goTo(UserDashboard.class)
+                .createMakeTransfer()
+                .goTo(MakeTransferMoney.class)
                 .sendTransferMoney(
                         userAccountSender,
                         "John Cena",
                         userAccountReceiver,
                         maxCorrectDepositMoney)
-                .checkAlertMessageAndAccept(
-                        String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(), maxCorrectDepositMoney, userAccountReceiver));
+                .checkAlertMessageAndAccept(String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(),
+                                maxCorrectDepositMoney, userAccountReceiver))
+                .goTo(DepositMoneyPage.class)
+                .open()
+                .checkDepositMoneyAccount(userAccountSender,
+                        String.format("%s (Balance: $0.00)", userAccountSender));
 
-        new DepositMoneyPage().open();
-        new DepositMoneyPage().checkDepositMoneyAccount(
-                userAccountSender,
-                String.format("%s (Balance: $0.00)", userAccountSender));
+
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsSender = SessionStorage.getSteps().getAllAccounts();
+//        String userAccountSender = createdAccountsSender.get(0).getAccountNumber();
+//
+//        new UserDashboard().open().createNewAccount();
+//        List<CreateAccountResponse> createdAccountsReceiver = SessionStorage.getSteps().getAllAccounts();
+//        String userAccountReceiver = createdAccountsReceiver.get(0).getAccountNumber();
+//
+//        new UserDashboard().createDepositMoney();
+//        new DepositMoneyPage()
+//                .addDepositMoney(userAccountSender, maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(String.format(
+//                        BankAlert.DEPOSIT_MONEY_SUCCESSFULLY.getMessage(), maxCorrectDepositMoney, userAccountSender));
+//
+//        new UserDashboard().createMakeTransfer();
+//        new MakeTransferMoney()
+//                .sendTransferMoney(
+//                        userAccountSender,
+//                        "John Cena",
+//                        userAccountReceiver,
+//                        maxCorrectDepositMoney)
+//                .checkAlertMessageAndAccept(
+//                        String.format(BankAlert.TRANSFER_SUCCESSFUL.getMessage(), maxCorrectDepositMoney, userAccountReceiver));
+//
+//        new DepositMoneyPage().open();
+//        new DepositMoneyPage().checkDepositMoneyAccount(
+//                userAccountSender,
+//                String.format("%s (Balance: $0.00)", userAccountSender));
     }
 }

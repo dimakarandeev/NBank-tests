@@ -6,6 +6,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import lombok.SneakyThrows;
 import org.openqa.selenium.Alert;
 import ui.elements.BaseElement;
 
@@ -31,6 +32,11 @@ public abstract class BasePage<T extends BasePage> {
 
     public <T extends BasePage> T getPage(Class<T> pageClass) {
         return Selenide.page(pageClass);
+    }
+
+    @SneakyThrows
+    public <T extends BasePage> T goTo(Class<T> pageClass) {
+        return pageClass.getDeclaredConstructor().newInstance();
     }
 
     public T checkAlertMessageAndAccept(String bankAlert) {

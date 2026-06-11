@@ -21,4 +21,10 @@ public class RandomData {
     public static Double getRandomRandomDecimalDeposit() {
         return ThreadLocalRandom.current().nextDouble(0.01, 5000.0);
     }
+
+    public static String getRandomUserUpdateProfile() {
+        String firstName = RandomStringUtils.randomAlphabetic(8);
+        String lastName = RandomStringUtils.randomAlphabetic(10);
+        return firstName + " " + lastName;
+    }
 }
