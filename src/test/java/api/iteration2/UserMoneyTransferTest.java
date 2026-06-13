@@ -169,7 +169,7 @@ public class UserMoneyTransferTest extends BaseTest {
 
     @Test
     public void userTransferMoneyMoreDepositAmount() {
-        double balance = RandomData.getRandomRandomDecimalDeposit();
+        double balance = RandomData.getRandomPositiveDecimalDeposit();
         double doubleBalance = balance * 2;
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
@@ -226,7 +226,7 @@ public class UserMoneyTransferTest extends BaseTest {
 
     @Test
     public void userTransferMoneyYourAccounts() {
-        double balance = RandomData.getRandomRandomDecimalDeposit();
+        double balance = RandomData.getRandomPositiveDecimalDeposit();
         List<Integer> accountSenderResponseList = new ArrayList<>();
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();

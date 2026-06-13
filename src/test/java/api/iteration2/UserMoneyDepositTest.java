@@ -120,7 +120,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     @Test
     public void userAddDepositOtherUser() {
-        double deposit = RandomData.getRandomRandomDecimalDeposit();
+        double deposit = RandomData.getRandomPositiveDecimalDeposit();
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
@@ -168,7 +168,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     @Test
     public void userAddDepositNotExistUser() {
-        double deposit = RandomData.getRandomRandomDecimalDeposit();
+        double deposit = RandomData.getRandomPositiveDecimalDeposit();
 
         CreateUserRequest userRequest = AdminSteps.createUser();
         RequestSpecification requestSpecification = RequestSpecs.authAsUser(

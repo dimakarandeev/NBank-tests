@@ -47,7 +47,7 @@ public class DepositMoneyPage extends BasePage<DepositMoneyPage> {
 
         String fullExpected = String.format(DepositMoneyBalance.DEPOSIT_MONEY_BALANCE.getMoneyBalance(), numberAccount, sumExpected);
         assertEquals(
-                String.format(DepositMoneyBalance.DEPOSIT_MONEY_BALANCE.getMoneyBalance(), numberAccount, fullExpected),
+                fullExpected,
                 foundText,
                 "Депозит '" + foundText + "' не совпадает с ожидаемым '" + fullExpected + "'");
         return this;

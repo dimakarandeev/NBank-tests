@@ -24,7 +24,8 @@ public class UserUpdateCustomProfileTest extends BaseUiTest {
                 .checkAlertMessageAndAccept(BankAlert.EDIT_PROFILE_SUCCESSFULLY.getMessage())
                 .goTo(UserDashboard.class)
                 .open()
-                .checkWelcomeText(String.format(new UserDashboard().getWELCOME_TEXT_CUSTOM_USER_DASHBOARD(), correctNameUser));
+                .checkWelcomeText(
+                        String.format(new UserDashboard().getWELCOME_TEXT_CUSTOM_USER_DASHBOARD(), correctNameUser));
     }
 
     @Test

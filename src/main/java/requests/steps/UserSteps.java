@@ -30,12 +30,12 @@ public class UserSteps {
                 .header(AUTHORIZATION_HEADER, Matchers.notNullValue());
     }
 
-    public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
-        return Integer.valueOf(new CrudRequester(authSpec(userRequest),
+    public String createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
+        return new CrudRequester(authSpec(userRequest),
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null)
-                .extract().as(CreateAccountResponse.class).getAccountNumber());
+                .extract().as(CreateAccountResponse.class).getAccountNumber();
     }
 
     public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {

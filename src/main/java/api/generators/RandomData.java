@@ -18,13 +18,19 @@ public class RandomData {
                 RandomStringUtils.randomNumeric(3) + "$";
     }
 
-    public static Double getRandomRandomDecimalDeposit() {
-        return ThreadLocalRandom.current().nextDouble(0.01, 5000.0);
+    public static Double getRandomPositiveDecimalDeposit() {
+        double value = ThreadLocalRandom.current().nextDouble(0.01, 5000.00);
+        return Math.round(value * 100.0) / 100.0;
     }
 
     public static String getRandomUserUpdateProfile() {
         String firstName = RandomStringUtils.randomAlphabetic(8);
         String lastName = RandomStringUtils.randomAlphabetic(10);
         return firstName + " " + lastName;
+    }
+    
+    public static Double getRandomNegativeDecimalDeposit() {
+        double value = ThreadLocalRandom.current().nextDouble(-5000.00, -0.01);
+        return Math.round(value * 100.0) / 100.0;
     }
 }
