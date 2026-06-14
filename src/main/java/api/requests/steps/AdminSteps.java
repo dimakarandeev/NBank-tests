@@ -1,4 +1,4 @@
-package requests.steps;
+package api.requests.steps;
 
 import api.generators.RandomModelGenerator;
 import api.models.CreateUserRequest;
@@ -8,8 +8,9 @@ import api.requests.skelethon.requesters.ValidatedCrudRequester;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 
-public class AdminSteps {
+import java.util.List;
 
+public class AdminSteps {
     public static CreateUserRequest createUser() {
         CreateUserRequest userRequest =
                 RandomModelGenerator.generate(CreateUserRequest.class);
@@ -21,5 +22,12 @@ public class AdminSteps {
                 .post(userRequest);
 
         return userRequest;
+    }
+
+    public static List<CreateUserResponse> getAllUsers() {
+        return new ValidatedCrudRequester<CreateUserResponse>(
+                RequestSpecs.adminSpec(),
+                Endpoint.ADMIN_USER,
+                ResponseSpecs.requestReturnsOK()).getAll(CreateUserResponse[].class);
     }
 }

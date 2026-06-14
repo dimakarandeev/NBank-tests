@@ -1,27 +1,28 @@
 package requests.steps;
 
+import api.models.AddUserDepositRequest;
+import api.models.CreateAccountResponse;
+import api.models.CreateUserRequest;
+import api.models.LoginUserRequest;
+import api.models.comparison.ModelAssertions;
+import api.models.modelTransferUserDeposit.TransferUserDepositRequest;
+import api.models.modelTransferUserDeposit.TransferUserDepositResponse;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
+import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.CrudRequester;
+import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import models.AddUserDepositRequest;
-import models.CreateUserRequest;
-import models.LoginUserRequest;
-import models.comparison.ModelAssertions;
-import models.modelTransferUserDeposit.TransferUserDepositRequest;
-import models.modelTransferUserDeposit.TransferUserDepositResponse;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileRequest;
-import models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 import org.hamcrest.Matchers;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.CrudRequester;
-import requests.skelethon.requesters.ValidatedCrudRequester;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
 
 public class UserSteps {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
-    public static void createAccounts(CreateUserRequest userRequest) {
+    public void createAccounts(CreateUserRequest userRequest) {
         new CrudRequester(RequestSpecs.unauthSpec(),
                 Endpoint.LOGIN,
                 ResponseSpecs.requestReturnsOK())
@@ -29,13 +30,12 @@ public class UserSteps {
                 .header(AUTHORIZATION_HEADER, Matchers.notNullValue());
     }
 
-    public static Integer createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
+    public String createAccountsAndGetAccountsId(CreateUserRequest userRequest) {
         return new CrudRequester(authSpec(userRequest),
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null)
-                .extract()
-                .response().getBody().jsonPath().getInt("id");
+                .extract().as(CreateAccountResponse.class).getAccountNumber();
     }
 
     public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {

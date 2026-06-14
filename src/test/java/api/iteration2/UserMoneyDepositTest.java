@@ -1,24 +1,24 @@
 package api.iteration2;
 
 import api.BaseTest;
-import generators.RandomData;
+import api.generators.RandomData;
+import api.models.AddUserDepositRequest;
+import api.models.CreateAccountResponse;
+import api.models.CreateUserRequest;
+import api.models.modelUpdateCustomerProfile.Account;
+import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.CrudRequester;
+import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.specs.RequestSpecs;
+import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
-import models.AddUserDepositRequest;
-import models.CreateAccountResponse;
-import models.CreateUserRequest;
-import models.modelUpdateCustomerProfile.Account;
-import models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.CrudRequester;
-import requests.skelethon.requesters.ValidatedCrudRequester;
 import requests.steps.AdminSteps;
 import specs.BankAPIAlert;
-import specs.RequestSpecs;
-import specs.ResponseSpecs;
 
 import java.util.stream.Stream;
 
@@ -91,7 +91,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountId = createAccountResponse.getId();
 
@@ -120,7 +120,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     @Test
     public void userAddDepositOtherUser() {
-        double deposit = RandomData.getRandomRandomDecimalDeposit();
+        double deposit = RandomData.getRandomPositiveDecimalDeposit();
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
@@ -129,7 +129,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecificationSender,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdSender = createAccountSenderResponse.getId();
 
@@ -140,7 +140,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecificationReceiver,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
@@ -168,7 +168,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
     @Test
     public void userAddDepositNotExistUser() {
-        double deposit = RandomData.getRandomRandomDecimalDeposit();
+        double deposit = RandomData.getRandomPositiveDecimalDeposit();
 
         CreateUserRequest userRequest = AdminSteps.createUser();
         RequestSpecification requestSpecification = RequestSpecs.authAsUser(
@@ -178,7 +178,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 requestSpecification,
                 Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
-                .post(null);
+                .post();
 
         Integer accountId = createAccountResponse.getId();
 
