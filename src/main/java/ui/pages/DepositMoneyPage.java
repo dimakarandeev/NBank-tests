@@ -3,6 +3,7 @@ package ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import common.utils.RetryUtils;
 
 import java.util.List;
 
@@ -33,12 +34,18 @@ public class DepositMoneyPage extends BasePage<DepositMoneyPage> {
     }
 
     public DepositMoneyPage checkDepositMoneyAccount(String numberAccount, String sumExpected) {
-        List<SelenideElement> matchingOptions = selectedAccountSender
-                .shouldBe(Condition.visible, Condition.enabled)
-                .getOptions()
-                .stream()
-                .filter(opt -> opt.getText().startsWith(numberAccount))
-                .toList();
+
+        List<SelenideElement> matchingOptions = RetryUtils.retry(
+                () -> selectedAccountSender
+                        .shouldBe(Condition.visible, Condition.enabled)
+                        .getOptions()
+                        .stream()
+                        .filter(opt -> opt.getText().startsWith(numberAccount))
+                        .toList(),
+                result -> result != null && !result.isEmpty(),
+                3,
+                1000
+        );
 
         int count = matchingOptions.size();
         assertEquals(1, count, "Ожидается ровно 1 опция, но найдено: " + count);

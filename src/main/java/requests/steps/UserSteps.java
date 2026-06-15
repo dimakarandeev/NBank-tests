@@ -14,9 +14,13 @@ import api.requests.skelethon.requesters.CrudRequester;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
+import common.storage.SessionStorage;
+import common.utils.RetryUtils;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.hamcrest.Matchers;
+
+import java.util.List;
 
 public class UserSteps {
 
@@ -36,6 +40,18 @@ public class UserSteps {
                 ResponseSpecs.entityWasCreated())
                 .post(null)
                 .extract().as(CreateAccountResponse.class).getAccountNumber();
+    }
+
+    public static List<CreateAccountResponse> findAllAccountUser() {
+        List<CreateAccountResponse> createdAccounts =
+                RetryUtils.retry(
+                        () -> SessionStorage.getSteps().getAllAccounts(),
+                        result -> result != null && !result.isEmpty(),
+                        3,
+                        1000
+                );
+
+        return createdAccounts;
     }
 
     public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {
