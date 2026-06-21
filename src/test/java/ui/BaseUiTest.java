@@ -25,6 +25,10 @@ public class BaseUiTest extends BaseTest {
         Configuration.remote = Config.getProperty("uiRemote");
         Configuration.baseUrl = Config.getProperty("uiBaseUrl");
         Configuration.browser = Config.getProperty("browser");
+        Configuration.headless = true;
+        Configuration.timeout = 60000;
+        Configuration.remoteReadTimeout = 240000;
+        Configuration.remoteConnectionTimeout = 120000;
         Configuration.browserSize = Config.getProperty("browserSize");
 
         Configuration.browserCapabilities.setCapability("selenoid:options",
