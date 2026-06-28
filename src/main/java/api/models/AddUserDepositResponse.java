@@ -1,5 +1,6 @@
 package api.models;
 
+import api.models.modelUpdateCustomerProfile.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AddUserDepositResponse extends BaseModel {
-    private Integer id;
+    private Long id;
     private String accountNumber;
-    private Integer balance;
-    private List<String> transactions;
+    private Double balance;
+    private List<Transaction> transactions;
 }

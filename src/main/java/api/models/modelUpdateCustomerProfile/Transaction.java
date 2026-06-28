@@ -14,5 +14,7 @@ public class Transaction {
     private double amount;
     private String type;
     private String timestamp; // строка вида "Fri May 01 12:54:39 UTC 2026"
+    private String timestampAsString;
     private int relatedAccountId;
+    private double amountAsDouble;
 }

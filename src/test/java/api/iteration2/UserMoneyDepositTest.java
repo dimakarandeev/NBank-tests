@@ -1,15 +1,18 @@
 package api.iteration2;
 
 import api.BaseTest;
+import api.dao.AccountDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.AddUserDepositRequest;
+import api.models.AddUserDepositResponse;
 import api.models.CreateAccountResponse;
 import api.models.CreateUserRequest;
 import api.models.modelUpdateCustomerProfile.Account;
 import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import api.requests.skelethon.Endpoint;
-import api.requests.skelethon.requesters.CrudRequester;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.requests.steps.DataBaseSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
@@ -47,10 +50,12 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountId = createAccountResponse.getId();
-        new CrudRequester(requestSpecification,
-                Endpoint.DEPOSIT,
-                ResponseSpecs.requestReturnsOK())
+        Integer accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
+
+        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+                (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
+                        Endpoint.DEPOSIT,
+                        ResponseSpecs.requestReturnsOK())
                 .post(AddUserDepositRequest.builder()
                         .id(accountId)
                         .balance(balance)
@@ -69,12 +74,15 @@ public class UserMoneyDepositTest extends BaseTest {
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountId + " должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
-                Arguments.of(-100.0, BankAPIAlert.DEPOSIT_AMOUNT_MIN_REQUIRED.getMessage()),
-                Arguments.of(0.0, BankAPIAlert.DEPOSIT_AMOUNT_MIN_REQUIRED.getMessage()),
+                Arguments.of(-100.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
+                Arguments.of(0.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
                 Arguments.of(5001.0, BankAPIAlert.DEPOSIT_AMOUNT_MAX_EXCEEDED.getMessage())
         );
     }
@@ -93,11 +101,12 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountId = createAccountResponse.getId();
+        Integer accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
 
-        new CrudRequester(requestSpecification,
-                Endpoint.DEPOSIT,
-                ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
+        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+                (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
+                        Endpoint.DEPOSIT,
+                        ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
                 .post(AddUserDepositRequest.builder()
                         .id(accountId)
                         .balance(balance)
@@ -116,6 +125,9 @@ public class UserMoneyDepositTest extends BaseTest {
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     @Test
@@ -131,7 +143,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = createAccountSenderResponse.getId();
+        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
 
         CreateUserRequest userRequestReceiver = AdminSteps.createUser();
         RequestSpecification requestSpecificationReceiver = RequestSpecs.authAsUser(
@@ -142,10 +154,12 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = createAccountReceiverResponse.getId();
-        new CrudRequester(requestSpecificationSender,
-                Endpoint.DEPOSIT,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
+
+        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+                (RequestSpecs.authAsUser(userRequestSender.getUsername(), userRequestSender.getPassword()),
+                        Endpoint.DEPOSIT,
+                        ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(accountIdReceiver)
                         .balance(deposit)
@@ -164,6 +178,9 @@ public class UserMoneyDepositTest extends BaseTest {
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     @Test
@@ -180,11 +197,12 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountId = createAccountResponse.getId();
+        int accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
 
-        new CrudRequester(requestSpecification,
-                Endpoint.DEPOSIT,
-                ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+                (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
+                        Endpoint.DEPOSIT,
+                        ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(-Math.abs(accountId))
                         .balance(deposit)
@@ -203,5 +221,8 @@ public class UserMoneyDepositTest extends BaseTest {
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountId + " не найден"));
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 }
