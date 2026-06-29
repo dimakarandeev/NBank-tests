@@ -1,6 +1,8 @@
 package api.iteration2;
 
 import api.BaseTest;
+import api.dao.AccountDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.AddUserDepositRequest;
 import api.models.CreateAccountResponse;
@@ -13,6 +15,7 @@ import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import api.requests.skelethon.Endpoint;
 import api.requests.skelethon.requesters.CrudRequester;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.requests.steps.DataBaseSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
@@ -53,7 +56,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = createAccountSenderResponse.getId();
+        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
@@ -71,7 +74,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = createAccountReceiverResponse.getId();
+        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
         new CrudRequester(requestSpecificationSender,
                 Endpoint.TRANSFER,
                 ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
@@ -89,11 +92,14 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(accountIdSender))
+                .filter(acc -> acc.getId().equals((long) accountIdSender))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
 
         assertEquals(maxAllowBalance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     public static Stream<Arguments> transferCorrectData() {
@@ -117,7 +123,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = createAccountSenderResponse.getId();
+        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
 
         TestUtils.repeat(2, () ->
                 new CrudRequester(requestSpecificationSender,
@@ -137,7 +143,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = createAccountReceiverResponse.getId();
+        int accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
         TransferUserDepositRequest transferUserDepositRequest = TransferUserDepositRequest.builder()
                 .senderAccountId(accountIdSender)
                 .receiverAccountId(accountIdReceiver)
@@ -160,11 +166,14 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(accountIdReceiver))
+                .filter(acc -> acc.getId().equals((long) accountIdReceiver))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
 
         assertEquals(correctBalance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     @Test
@@ -181,7 +190,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = createAccountSenderResponse.getId();
+        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
@@ -199,7 +208,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = createAccountReceiverResponse.getId();
+        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
         new CrudRequester(requestSpecificationSender,
                 Endpoint.TRANSFER,
                 ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()))
@@ -217,11 +226,14 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(accountIdSender))
+                .filter(acc -> acc.getId().equals(Long.valueOf(accountIdSender)))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     @Test
@@ -239,7 +251,7 @@ public class UserMoneyTransferTest extends BaseTest {
                     Endpoint.ACCOUNTS,
                     ResponseSpecs.entityWasCreated())
                     .post();
-            accountSenderResponseList.add(createAccountSenderResponse.getId());
+            accountSenderResponseList.add(Integer.parseInt(String.valueOf(createAccountSenderResponse.getId())));
         });
 
         Integer accountIdSender = accountSenderResponseList.get(0);
@@ -275,10 +287,13 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(accountIdReceiver))
+                .filter(acc -> acc.getId().equals(Long.valueOf(accountIdReceiver)))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
+
+        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 }

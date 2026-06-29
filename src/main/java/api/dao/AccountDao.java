@@ -1,20 +1,17 @@
-package api.models.modelUpdateCustomerProfile;
+package api.dao;
 
-import api.models.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Account extends BaseModel {
+public class AccountDao {
     private Long id;
     private String accountNumber;
-    private double balance;
-    private List<Transaction> transactions;
+    private Double balance;
+    private Long customerId;
 }

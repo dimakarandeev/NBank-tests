@@ -1,6 +1,10 @@
 package api.iteration2;
 
 import api.BaseTest;
+import api.dao.AccountDao;
+import api.dao.UserDao;
+import api.dao.comparison.DaoAndModelAssertions;
+import api.generators.RandomData;
 import api.models.CreateAccountResponse;
 import api.models.CreateUserRequest;
 import api.models.comparison.ModelAssertions;
@@ -10,6 +14,7 @@ import api.models.modelUpdateCustomerProfile.UpdateCustomerProfileResponse;
 import api.requests.skelethon.Endpoint;
 import api.requests.skelethon.requesters.CrudRequester;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
+import api.requests.steps.DataBaseSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
@@ -29,7 +34,7 @@ public class UserUpdateCustomProfileTest extends BaseTest {
 
     @Test
     public void successChangeUserName() {
-        String updateProfileName = "John Smith";
+        String updateProfileName = RandomData.getRandomUserUpdateProfile();
 
         CreateUserRequest userRequestSenderUser = AdminSteps.createUser();
         RequestSpecification requestSpecification = RequestSpecs.authAsUser(
@@ -63,6 +68,9 @@ public class UserUpdateCustomProfileTest extends BaseTest {
                         .get();
 
         assertEquals(updateProfileName, getCustomerProfileResponse.getName());
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(getCustomerProfileResponse.getUsername());
+        DaoAndModelAssertions.assertThat(getCustomerProfileResponse, userDao).match();
     }
 
     public static Stream<Arguments> nameInvalidData() {
@@ -106,5 +114,8 @@ public class UserUpdateCustomProfileTest extends BaseTest {
                         .get();
 
         assertNotEquals(invalidName, getCustomerProfileResponse.getName());
+
+        UserDao userDao = DataBaseSteps.getUserById(getCustomerProfileResponse.getId());
+        DaoAndModelAssertions.assertThat(getCustomerProfileResponse, userDao).match();
     }
 }
