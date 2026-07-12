@@ -42,18 +42,18 @@ public class FraudCheckWireMockExtension implements BeforeEachCallback, AfterEac
 
         // Create the response body based on annotation parameters
         String responseBody = new ObjectMapper().writeValueAsString(new FraudResponse(
-                config.status(),
-                config.decision(),
+                config.status().getStatus(),
+                config.decision().getFraudDecision(),
                 config.riskScore(),
-                config.reason(),
+                config.reason().getFraudReason(),
                 config.requiresManualReview(),
                 config.additionalVerificationRequired()));
 
         // Mock the fraud detection service endpoint
         wireMockServer.stubFor(post(urlPathMatching(config.endpoint()))
                 .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
+                        .withStatus(config.httpStatus())
+                        .withHeader("Content-Type", config.contentType())
                         .withBody(responseBody)));
     }
 

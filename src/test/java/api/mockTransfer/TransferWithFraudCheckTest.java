@@ -4,6 +4,10 @@ import api.BaseTest;
 import api.models.CreateUserRequest;
 import api.models.TransferResponse;
 import api.models.comparison.ModelAssertions;
+import api.models.modelTransferUserDeposit.TransferFraudDecision;
+import api.models.modelTransferUserDeposit.TransferFraudReason;
+import api.models.modelTransferUserDeposit.TransferMessage;
+import api.models.modelTransferUserDeposit.TransferStatus;
 import api.requests.steps.AccountSteps;
 import api.requests.steps.AdminSteps;
 import common.annotations.FraudCheckMock;
@@ -46,6 +50,8 @@ public class TransferWithFraudCheckTest extends BaseTest {
                 senderAccountId,
                 receiverAccountId,
                 transferAmount);
+
+        softly.assertThat(transferResponse).isNotNull();
     }
 
     @AfterEach
@@ -56,16 +62,14 @@ public class TransferWithFraudCheckTest extends BaseTest {
     @Test
     @FraudCheckMock()
     public void testTransferWithFraudCheck() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("APPROVED")
-                .message("Transfer approved and processed immediately")
+                .status(TransferStatus.APPROVED.getStatus())
+                .message(TransferMessage.APPROVED.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.2)
-                .fraudReason("Low risk transaction")
+                .fraudReason(TransferFraudReason.LOW_RISK.getFraudReason())
                 .requiresManualReview(false)
                 .requiresVerification(false)
                 .build();
@@ -75,21 +79,19 @@ public class TransferWithFraudCheckTest extends BaseTest {
 
     @Test
     @FraudCheckMock(
-            decision = "BLOCKED",
+            decision = TransferFraudDecision.BLOCKED,
             riskScore = 0.9,
-            reason = "Transaction blocked by fraud policy"
+            reason = TransferFraudReason.BLOCKED_BY_POLICY
     )
     public void testTransferBlocked() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("BLOCKED")
-                .message("Transfer approved and processed immediately")
+                .status(TransferStatus.BLOCKED.getStatus())
+                .message(TransferMessage.APPROVED.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.9)
-                .fraudReason("Transaction blocked by fraud policy")
+                .fraudReason(TransferFraudReason.BLOCKED_BY_POLICY.getFraudReason())
                 .requiresManualReview(false)
                 .requiresVerification(false)
                 .build();
@@ -99,21 +101,19 @@ public class TransferWithFraudCheckTest extends BaseTest {
 
     @Test
     @FraudCheckMock(
-            decision = "REVIEW_REQUIRED",
+            decision = TransferFraudDecision.REVIEW_REQUIRED,
             riskScore = 0.6,
-            reason = "Unusual transaction pattern"
+            reason = TransferFraudReason.UNUSUAL_PATTERN
     )
     public void testTransferRequiresManualReviewByDecision() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("MANUAL_REVIEW_REQUIRED")
-                .message("Transfer requires manual review")
+                .status(TransferStatus.MANUAL_REVIEW_REQUIRED.getStatus())
+                .message(TransferMessage.MANUAL_REVIEW.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.6)
-                .fraudReason("Unusual transaction pattern")
+                .fraudReason(TransferFraudReason.UNUSUAL_PATTERN.getFraudReason())
                 .requiresManualReview(false)
                 .requiresVerification(false)
                 .build();
@@ -124,20 +124,18 @@ public class TransferWithFraudCheckTest extends BaseTest {
     @Test
     @FraudCheckMock(
             riskScore = 0.5,
-            reason = "Manual review required",
+            reason = TransferFraudReason.MANUAL_REVIEW_REQUIRED,
             requiresManualReview = true
     )
     public void testTransferRequiresManualReviewByFlag() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("MANUAL_REVIEW_REQUIRED")
-                .message("Transfer requires manual review")
+                .status(TransferStatus.MANUAL_REVIEW_REQUIRED.getStatus())
+                .message(TransferMessage.MANUAL_REVIEW.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.5)
-                .fraudReason("Manual review required")
+                .fraudReason(TransferFraudReason.MANUAL_REVIEW_REQUIRED.getFraudReason())
                 .requiresManualReview(true)
                 .requiresVerification(false)
                 .build();
@@ -148,21 +146,19 @@ public class TransferWithFraudCheckTest extends BaseTest {
 
     @Test
     @FraudCheckMock(
-            decision = "VERIFICATION_REQUIRED",
+            decision = TransferFraudDecision.VERIFICATION_REQUIRED,
             riskScore = 0.7,
-            reason = "Additional verification needed"
+            reason = TransferFraudReason.ADDITIONAL_VERIFICATION_NEEDED
     )
     public void testTransferRequiresVerificationByDecision() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("VERIFICATION_REQUIRED")
-                .message("Additional verification required")
+                .status(TransferStatus.VERIFICATION_REQUIRED.getStatus())
+                .message(TransferMessage.ADDITIONAL_VERIFICATION.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.7)
-                .fraudReason("Additional verification needed")
+                .fraudReason(TransferFraudReason.ADDITIONAL_VERIFICATION_NEEDED.getFraudReason())
                 .requiresManualReview(false)
                 .requiresVerification(false)
                 .build();
@@ -173,20 +169,18 @@ public class TransferWithFraudCheckTest extends BaseTest {
     @Test
     @FraudCheckMock(
             riskScore = 0.4,
-            reason = "Verification required",
+            reason = TransferFraudReason.VERIFICATION_REQUIRED,
             additionalVerificationRequired = true
     )
     public void testTransferRequiresVerificationByFlag() {
-        softly.assertThat(transferResponse).isNotNull();
-
         TransferResponse expectedResponse = TransferResponse.builder()
-                .status("APPROVED")
-                .message("Transfer approved and processed immediately")
+                .status(TransferStatus.APPROVED.getStatus())
+                .message(TransferMessage.APPROVED.getMsg())
                 .amount(transferAmount)
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
                 .fraudRiskScore(0.4)
-                .fraudReason("Verification required")
+                .fraudReason(TransferFraudReason.VERIFICATION_REQUIRED.getFraudReason())
                 .requiresManualReview(false)
                 .requiresVerification(true)
                 .build();

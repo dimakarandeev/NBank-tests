@@ -1,5 +1,9 @@
 package common.annotations;
 
+import api.models.modelTransferUserDeposit.TransferFraudDecision;
+import api.models.modelTransferUserDeposit.TransferFraudReason;
+import api.models.modelTransferUserDeposit.TransferStatus;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,12 +16,12 @@ public @interface FraudCheckMock {
     /**
      * The fraud check status to return
      */
-    String status() default "SUCCESS";
+    TransferStatus status() default TransferStatus.SUCCESS;
 
     /**
      * The fraud check decision
      */
-    String decision() default "APPROVED";
+    TransferFraudDecision decision() default TransferFraudDecision.APPROVED;
 
     /**
      * The risk score (0.0 to 1.0)
@@ -27,7 +31,7 @@ public @interface FraudCheckMock {
     /**
      * The reason for the fraud check result
      */
-    String reason() default "Low risk transaction";
+    TransferFraudReason reason() default TransferFraudReason.LOW_RISK;
 
     /**
      * Whether manual review is required
@@ -48,4 +52,14 @@ public @interface FraudCheckMock {
      * The endpoint path to mock
      */
     String endpoint() default "/fraud-check";
+
+    /**
+     * HTTP status code to return in the mock response
+     */
+    int httpStatus() default 200;
+
+    /**
+     * Content-Type header value for the mock response
+     */
+    String contentType() default "application/json";
 }
