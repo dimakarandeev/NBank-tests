@@ -28,7 +28,7 @@ jobs: # аналог этапов
 
       - name: Set up services
         run: |
-          cd ${{ github.workspace }}/infra/docker_compose
+          cd ${{ github.workspace }}/infa/docker_compose
           bash restart_docker.sh
 
       - name: Run tests
