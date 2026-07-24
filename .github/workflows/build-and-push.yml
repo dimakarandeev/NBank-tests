@@ -36,7 +36,7 @@ jobs: # аналог этапов
         run: ./mvnw checkstyle:checkstyle
 
       - name: Build Docker image
-        run: docker build -t nbank-tests
+        run: docker build -t nbank-tests .
 
       - name: Push image to Docker Hub
         env:
