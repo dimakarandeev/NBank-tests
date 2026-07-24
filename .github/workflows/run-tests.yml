@@ -27,9 +27,7 @@ jobs: # аналог этапов
             
 
       - name: Set up services
-        run: |
-          cd ${{ github.workspace }}/infa/docker_compose
-          bash restart_docker.sh
+        run: cd infa/docker_compose && bash restart_docker.sh && cd ../..
 
       - name: Run tests
         run: ./mvnw clean test -q
