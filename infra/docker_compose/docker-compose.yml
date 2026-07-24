@@ -47,7 +47,7 @@ services:
       - "4444:4444"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - C:\selenoid\config:/etc/selenoid/:ro
+      - ./config/:/etc/selenoid/:ro
     environment:
       - DOCKER_API_VERSION=1.43
     command: [ "-container-network", "nbank-network" ]
