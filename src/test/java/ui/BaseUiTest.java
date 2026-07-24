@@ -6,9 +6,7 @@ import api.models.CreateUserRequest;
 import api.specs.RequestSpecs;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import common.extensions.AdminSessionExtension;
-import common.extensions.BrowserMatchExtension;
-import common.extensions.UserSessionExtension;
+import common.extensions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 
