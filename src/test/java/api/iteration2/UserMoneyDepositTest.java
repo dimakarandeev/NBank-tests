@@ -147,7 +147,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
+        Long accountIdSender = createAccountSenderResponse.getId();
 
         CreateUserRequest userRequestReceiver = AdminSteps.createUser();
         RequestSpecification requestSpecificationReceiver = RequestSpecs.authAsUser(
