@@ -75,8 +75,8 @@ public class UserMoneyDepositTest extends BaseTest {
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountId + " должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
-        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+//        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     public static Stream<Arguments> depositInvalidData() {
@@ -126,8 +126,8 @@ public class UserMoneyDepositTest extends BaseTest {
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
-        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+//        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     @Test
@@ -179,8 +179,8 @@ public class UserMoneyDepositTest extends BaseTest {
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
-        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+//        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 
     @Test

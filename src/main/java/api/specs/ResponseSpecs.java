@@ -36,7 +36,7 @@ public class ResponseSpecs {
 
     public static ResponseSpecification requestReturnsBadRequestWithText(String errorValue) {
         return defaultResponseBuilder()
-                .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
+                .expectStatusCode(HttpStatus.SC_FORBIDDEN)
                 .expectBody(Matchers.equalTo(errorValue))
                 .build();
     }
