@@ -35,7 +35,7 @@ public class DepositMoneyPage extends BasePage<DepositMoneyPage> {
 
     public DepositMoneyPage checkDepositMoneyAccount(String numberAccount, String sumExpected) {
 
-        List<SelenideElement> matchingOptions = RetryUtils.retry(
+        List<SelenideElement> matchingOptions = RetryUtils.retry("Check deposit money account",
                 () -> selectedAccountSender
                         .shouldBe(Condition.visible, Condition.enabled)
                         .getOptions()

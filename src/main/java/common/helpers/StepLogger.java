@@ -29,7 +29,7 @@ public class StepLogger {
     }
 
     public static <T> T log(String title, ThrowableRunnable<T> runnable) {
-        return Allure.step(title, () -> runnable.run());
+        return Allure.step(title, runnable::run);
     }
 
     public static void log(String title, ThrowableVoidRunnable runnable) {

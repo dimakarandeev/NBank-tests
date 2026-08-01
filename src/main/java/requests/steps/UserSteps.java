@@ -44,7 +44,7 @@ public class UserSteps {
 
     public static List<CreateAccountResponse> findAllAccountUser() {
         List<CreateAccountResponse> createdAccounts =
-                RetryUtils.retry(
+                RetryUtils.retry("Find all account user",
                         () -> SessionStorage.getSteps().getAllAccounts(),
                         result -> result != null && !result.isEmpty(),
                         3,
