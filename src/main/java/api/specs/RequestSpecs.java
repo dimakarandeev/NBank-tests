@@ -33,7 +33,7 @@ public class RequestSpecs {
                         new ResponseLoggingFilter(), new SwaggerCoverageRestAssured(
                                 new FileSystemOutputWriter(Paths.get("target/" + OUTPUT_DIRECTORY))), new AllureRestAssured())
                 )
-                .setBaseUri(Config.getProperty("apiBaseUrl") +Config.getProperty("apiVersion"));
+                .setBaseUri(Config.getProperty("apiBaseUrl"));
     }
 
     public static RequestSpecification unauthSpec() {
