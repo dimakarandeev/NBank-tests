@@ -1,6 +1,7 @@
 package api.specs;
 
 import api.configs.Config;
+import com.github.viclovsky.swagger.coverage.FileSystemOutputWriter;
 import com.github.viclovsky.swagger.coverage.SwaggerCoverageRestAssured;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -12,9 +13,12 @@ import api.models.LoginUserRequest;
 import api.requests.skelethon.Endpoint;
 import api.requests.skelethon.requesters.CrudRequester;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.github.viclovsky.swagger.coverage.SwaggerCoverageConstants.OUTPUT_DIRECTORY;
 
 public class RequestSpecs {
     private static Map<String, String> authHeaders = new HashMap<>(Map.of("admin", "Basic YWRtaW46YWRtaW4="));
@@ -26,7 +30,9 @@ public class RequestSpecs {
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
                 .addFilters( List.of(new RequestLoggingFilter(),
-                        new ResponseLoggingFilter(), new AllureRestAssured(), new SwaggerCoverageRestAssured()))
+                        new ResponseLoggingFilter(), new SwaggerCoverageRestAssured(
+                                new FileSystemOutputWriter(Paths.get("target/" + OUTPUT_DIRECTORY))), new AllureRestAssured())
+                )
                 .setBaseUri(Config.getProperty("apiBaseUrl") +Config.getProperty("apiVersion"));
     }
 
