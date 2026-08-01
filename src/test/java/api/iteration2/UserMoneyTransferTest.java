@@ -38,9 +38,9 @@ public class UserMoneyTransferTest extends BaseTest {
     public static Stream<Arguments> transferInvalidData() {
         double maxAllowBalance = 5000.0;
         return Stream.of(
-                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
-                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
-                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MAX_EXCEEDED.getMessage())
+                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage())
         );
     }
 
@@ -77,7 +77,7 @@ public class UserMoneyTransferTest extends BaseTest {
         Long accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
                 Endpoint.TRANSFER,
-                ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
+                ResponseSpecs.requestReturnsSCBADREQUESTWithText(errorValue))
                 .post(TransferUserDepositRequest.builder()
                         .senderAccountId(accountIdSender)
                         .receiverAccountId(accountIdReceiver)
