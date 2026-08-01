@@ -78,8 +78,8 @@ public class UserSteps {
     }
 
     public static void successTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
-                                                           Integer accountIdSenderUser,
-                                                           Integer accountIdReceiverUser,
+                                                           Long accountIdSenderUser,
+                                                           Long accountIdReceiverUser,
                                                            Double amount) {
         RequestSpecification authSpec = authSpec(userRequestSenderUser);
         TransferUserDepositRequest transferUserDepositRequest =
@@ -95,8 +95,8 @@ public class UserSteps {
     }
 
     public static void failTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
-                                                        Integer accountIdSenderUser,
-                                                        Integer accountIdReceiverUser,
+                                                        Long accountIdSenderUser,
+                                                        Long accountIdReceiverUser,
                                                         Double amount,
                                                         ResponseSpecification responseSpecs) {
         RequestSpecification authSpec = authSpec(userRequestSenderUser);
