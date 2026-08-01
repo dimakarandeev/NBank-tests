@@ -1,0 +1,45 @@
+name: Build and push Docker image with tests
+
+# триггер
+on:
+  push:
+    paths:
+      - 'src/**'
+  workflow_dispatch:
+
+jobs: # аналог этапов
+  build-and-push:
+    name: Build, checkstyle, build image and push to Docker Hub
+    runs-on: ubuntu-latest
+    steps: # шаги конкретного job
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Cache Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+            
+      - name: Build project with Maven (compile)
+        run: ./mvnw compile -q
+
+      - name: Run Checkstyle
+        run: ./mvnw checkstyle:checkstyle
+
+      - name: Build Docker image
+        run: docker build -t nbank-tests .
+
+      - name: Push image to Docker Hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: bash infra/docker_compose/push-tests.sh ${{ github.sha }}
