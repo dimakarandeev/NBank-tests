@@ -47,7 +47,7 @@ jobs: # аналог этапов
           path: gh-pages
 
       - name: Build test report
-        uses: simple-elf/allure-report-action@v2.1.0
+        uses: simple-elf/allure-report-action@master
         if: always()
         with:
           gh_pages: gh-pages
