@@ -51,9 +51,9 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
+        Long accountId = createAccountResponse.getId();
 
-        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+        new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
                         Endpoint.DEPOSIT,
                         ResponseSpecs.requestReturnsOK())
@@ -103,7 +103,7 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
+        Long accountId = createAccountResponse.getId();
 
         AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
@@ -156,9 +156,9 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
+        Long accountIdReceiver = createAccountReceiverResponse.getId();
 
-        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+         new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequestSender.getUsername(), userRequestSender.getPassword()),
                         Endpoint.DEPOSIT,
                         ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
@@ -199,9 +199,9 @@ public class UserMoneyDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        int accountId = Integer.parseInt(String.valueOf(createAccountResponse.getId()));
+        Long accountId = createAccountResponse.getId();
 
-        AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
+        new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
                         Endpoint.DEPOSIT,
                         ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
