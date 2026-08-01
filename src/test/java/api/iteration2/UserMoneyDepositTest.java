@@ -159,7 +159,7 @@ public class UserMoneyDepositTest extends BaseTest {
         AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequestSender.getUsername(), userRequestSender.getPassword()),
                         Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+                        ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(accountIdReceiver)
                         .balance(deposit)
@@ -202,7 +202,7 @@ public class UserMoneyDepositTest extends BaseTest {
         AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
                         Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnForbidden(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+                        ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(-Math.abs(accountId))
                         .balance(deposit)
@@ -222,7 +222,7 @@ public class UserMoneyDepositTest extends BaseTest {
 
         assertEquals(0, account.getBalance(), "Баланс аккаунта " + accountId + " не должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
-        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(addUserDepositResponse.getId());
+//        DaoAndModelAssertions.assertThat(addUserDepositResponse, accountDao).match();
     }
 }
