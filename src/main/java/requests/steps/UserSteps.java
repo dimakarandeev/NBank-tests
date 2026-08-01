@@ -44,7 +44,7 @@ public class UserSteps {
 
     public static List<CreateAccountResponse> findAllAccountUser() {
         List<CreateAccountResponse> createdAccounts =
-                RetryUtils.retry(
+                RetryUtils.retry("Find all account user",
                         () -> SessionStorage.getSteps().getAllAccounts(),
                         result -> result != null && !result.isEmpty(),
                         3,
@@ -54,7 +54,7 @@ public class UserSteps {
         return createdAccounts;
     }
 
-    public static void successDepositToUserAccount(CreateUserRequest userRequest, Integer userId, double balance) {
+    public static void successDepositToUserAccount(CreateUserRequest userRequest, Long userId, double balance) {
         new CrudRequester(authSpec(userRequest),
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
@@ -65,7 +65,7 @@ public class UserSteps {
     }
 
     public static void failDepositToUserAccount(CreateUserRequest userRequest,
-                                                Integer accountIdUser,
+                                                Long accountIdUser,
                                                 double balance,
                                                 ResponseSpecification responseSpecs) {
         new CrudRequester(authSpec(userRequest),
@@ -78,8 +78,8 @@ public class UserSteps {
     }
 
     public static void successTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
-                                                           Integer accountIdSenderUser,
-                                                           Integer accountIdReceiverUser,
+                                                           Long accountIdSenderUser,
+                                                           Long accountIdReceiverUser,
                                                            Double amount) {
         RequestSpecification authSpec = authSpec(userRequestSenderUser);
         TransferUserDepositRequest transferUserDepositRequest =
@@ -95,8 +95,8 @@ public class UserSteps {
     }
 
     public static void failTransferMoneyAmongAccountsId(CreateUserRequest userRequestSenderUser,
-                                                        Integer accountIdSenderUser,
-                                                        Integer accountIdReceiverUser,
+                                                        Long accountIdSenderUser,
+                                                        Long accountIdReceiverUser,
                                                         Double amount,
                                                         ResponseSpecification responseSpecs) {
         RequestSpecification authSpec = authSpec(userRequestSenderUser);
@@ -142,8 +142,8 @@ public class UserSteps {
                 .build();
     }
 
-    private static TransferUserDepositRequest buildTransferUserDeposit(Integer accountIdSenderUser,
-                                                                       Integer accountIdReceiverUser,
+    private static TransferUserDepositRequest buildTransferUserDeposit(Long accountIdSenderUser,
+                                                                       Long accountIdReceiverUser,
                                                                        Double amount) {
         return TransferUserDepositRequest.builder()
                 .senderAccountId(accountIdSenderUser)

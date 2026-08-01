@@ -24,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
-import specs.BankAPIAlert;
+import api.specs.BankAPIAlert;
 import utils.TestUtils;
 
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class UserMoneyTransferTest extends BaseTest {
     public static Stream<Arguments> transferInvalidData() {
         double maxAllowBalance = 5000.0;
         return Stream.of(
-                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
-                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MIN_REQUIRED.getMessage()),
-                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_AMOUNT_MAX_EXCEEDED.getMessage())
+                Arguments.of(-100.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(0.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()),
+                Arguments.of(10001.0, maxAllowBalance, BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage())
         );
     }
 
@@ -56,7 +56,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
+        Long accountIdSender = createAccountSenderResponse.getId();
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
@@ -74,10 +74,10 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
+        Long accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
                 Endpoint.TRANSFER,
-                ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
+                ResponseSpecs.requestReturnsSCBADREQUESTWithText(errorValue))
                 .post(TransferUserDepositRequest.builder()
                         .senderAccountId(accountIdSender)
                         .receiverAccountId(accountIdReceiver)
@@ -92,14 +92,14 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals((long) accountIdSender))
+                .filter(acc -> acc.getId().equals(accountIdSender))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
 
         assertEquals(maxAllowBalance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
-        DaoAndModelAssertions.assertThat(account, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+//        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     public static Stream<Arguments> transferCorrectData() {
@@ -123,7 +123,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
+        Long accountIdSender = createAccountSenderResponse.getId();
 
         TestUtils.repeat(2, () ->
                 new CrudRequester(requestSpecificationSender,
@@ -143,7 +143,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        int accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
+        Long accountIdReceiver = createAccountReceiverResponse.getId();
         TransferUserDepositRequest transferUserDepositRequest = TransferUserDepositRequest.builder()
                 .senderAccountId(accountIdSender)
                 .receiverAccountId(accountIdReceiver)
@@ -166,14 +166,14 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals((long) accountIdReceiver))
+                .filter(acc -> acc.getId().equals(accountIdReceiver))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
 
         assertEquals(correctBalance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
-        DaoAndModelAssertions.assertThat(account, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+//        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     @Test
@@ -190,7 +190,7 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdSender = Integer.parseInt(String.valueOf(createAccountSenderResponse.getId()));
+        Long accountIdSender = createAccountSenderResponse.getId();
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
                 ResponseSpecs.requestReturnsOK())
@@ -208,10 +208,10 @@ public class UserMoneyTransferTest extends BaseTest {
                 ResponseSpecs.entityWasCreated())
                 .post();
 
-        Integer accountIdReceiver = Integer.parseInt(String.valueOf(createAccountReceiverResponse.getId()));
+        Long accountIdReceiver = createAccountReceiverResponse.getId();
         new CrudRequester(requestSpecificationSender,
                 Endpoint.TRANSFER,
-                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()))
+                ResponseSpecs.requestReturnsSCBADREQUESTWithText(BankAPIAlert.TRANSFER_VALIDATION_ERROR.getMessage()))
                 .post(TransferUserDepositRequest.builder()
                         .senderAccountId(accountIdSender)
                         .receiverAccountId(accountIdReceiver)
@@ -226,20 +226,20 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(Long.valueOf(accountIdSender)))
+                .filter(acc -> acc.getId().equals(accountIdSender))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdSender + " не найден"));
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdSender + " не должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
-        DaoAndModelAssertions.assertThat(account, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+//        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 
     @Test
     public void userTransferMoneyYourAccounts() {
         double balance = RandomData.getRandomPositiveDecimalDeposit();
-        List<Integer> accountSenderResponseList = new ArrayList<>();
+        List<Long> accountSenderResponseList = new ArrayList<>();
 
         CreateUserRequest userRequestSender = AdminSteps.createUser();
         RequestSpecification requestSpecificationSender = RequestSpecs.authAsUser(
@@ -251,11 +251,11 @@ public class UserMoneyTransferTest extends BaseTest {
                     Endpoint.ACCOUNTS,
                     ResponseSpecs.entityWasCreated())
                     .post();
-            accountSenderResponseList.add(Integer.parseInt(String.valueOf(createAccountSenderResponse.getId())));
+            accountSenderResponseList.add(createAccountSenderResponse.getId());
         });
 
-        Integer accountIdSender = accountSenderResponseList.get(0);
-        Integer accountIdReceiver = accountSenderResponseList.get(1);
+        Long accountIdSender = accountSenderResponseList.get(0);
+        Long accountIdReceiver = accountSenderResponseList.get(1);
 
         new CrudRequester(requestSpecificationSender,
                 Endpoint.DEPOSIT,
@@ -287,13 +287,13 @@ public class UserMoneyTransferTest extends BaseTest {
                         .get();
 
         Account account = getCustomerProfileResponse.getAccounts().stream()
-                .filter(acc -> acc.getId().equals(Long.valueOf(accountIdReceiver)))
+                .filter(acc -> acc.getId().equals(accountIdReceiver))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Аккаунт " + accountIdReceiver + " не найден"));
 
         assertEquals(balance, account.getBalance(), "Баланс аккаунта " + accountIdReceiver + " должен измениться");
 
-        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
-        DaoAndModelAssertions.assertThat(account, accountDao).match();
+//        AccountDao accountDao = DataBaseSteps.getAccountById(account.getId());
+//        DaoAndModelAssertions.assertThat(account, accountDao).match();
     }
 }

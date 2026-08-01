@@ -8,9 +8,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class RandomModelGenerator {
+
     private static final Random random = new Random();
 
-    public static <T> T generate(Class<T> clazz) {
+    public static  <T> T generate(Class<T> clazz) {
         try {
             T instance = clazz.getDeclaredConstructor().newInstance();
             for (Field field : getAllFields(clazz)) {

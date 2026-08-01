@@ -11,7 +11,7 @@ import api.models.BaseModel;
 @NoArgsConstructor
 @Builder
 public class TransferUserDepositRequest extends BaseModel {
-    private Integer senderAccountId;
-    private Integer receiverAccountId;
+    private Long senderAccountId;
+    private Long receiverAccountId;
     private Double amount;
 }
