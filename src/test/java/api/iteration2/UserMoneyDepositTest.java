@@ -1,8 +1,6 @@
 package api.iteration2;
 
 import api.BaseTest;
-import api.dao.AccountDao;
-import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.AddUserDepositRequest;
 import api.models.AddUserDepositResponse;
@@ -13,18 +11,16 @@ import api.models.modelUpdateCustomerProfile.GetCustomerProfileResponse;
 import api.requests.skelethon.Endpoint;
 import api.requests.skelethon.requesters.CrudRequester;
 import api.requests.skelethon.requesters.ValidatedCrudRequester;
-import api.requests.steps.DataBaseSteps;
+import api.specs.BankAPIAlert;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.qameta.allure.Issue;
 import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
-import api.specs.BankAPIAlert;
 
 import java.util.stream.Stream;
 
@@ -109,8 +105,8 @@ public class UserMoneyDepositTest extends BaseTest {
         Long accountId = createAccountResponse.getId();
 
         new CrudRequester(RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
-                        Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnsSCBADREQUESTWithText(errorValue))
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnsSCBADREQUESTWithText(errorValue))
                 .post(AddUserDepositRequest.builder()
                         .id(accountId)
                         .balance(balance)
@@ -160,9 +156,9 @@ public class UserMoneyDepositTest extends BaseTest {
 
         Long accountIdReceiver = createAccountReceiverResponse.getId();
 
-         new CrudRequester(RequestSpecs.authAsUser(userRequestSender.getUsername(), userRequestSender.getPassword()),
-                        Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+        new CrudRequester(RequestSpecs.authAsUser(userRequestSender.getUsername(), userRequestSender.getPassword()),
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(accountIdReceiver)
                         .balance(deposit)
@@ -203,8 +199,8 @@ public class UserMoneyDepositTest extends BaseTest {
         Long accountId = createAccountResponse.getId();
 
         new CrudRequester(RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
-                        Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
+                Endpoint.DEPOSIT,
+                ResponseSpecs.requestReturnsBadRequestWithText(BankAPIAlert.UNAUTHORIZED_ACCESS_TO_ACCOUNT.getMessage()))
                 .post(AddUserDepositRequest.builder()
                         .id(-Math.abs(accountId))
                         .balance(deposit)
