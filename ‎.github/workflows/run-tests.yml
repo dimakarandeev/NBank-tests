@@ -7,15 +7,15 @@ jobs: # аналог этапов
   run-tests:
     name: Set up services (review apps) and run tests
     runs-on: ubuntu-latest
-    steps: # шаги конкретного job
-      - name: Checkout repository # копирует файлы репозитория внутрь CI агента
+    steps: # шаги конкретной job
+      - name: Checkout repository # копируем файлы репозитория внутрь CI агента
         uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'corretto'
-          java-version: '17'
+          java-version: '21'
 
       - name: Cache Maven repository
         uses: actions/cache@v4
@@ -25,7 +25,6 @@ jobs: # аналог этапов
           restore-keys: |
             ${{ runner.os }}-maven-
 
-
       - name: Set up services
         run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
 
@@ -34,6 +33,7 @@ jobs: # аналог этапов
         env:
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://frontend
+          APIVERSION: /api/v1
 
       - name: Run Swagger coverage
         if: always()
