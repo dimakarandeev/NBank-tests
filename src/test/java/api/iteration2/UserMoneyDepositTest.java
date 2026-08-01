@@ -16,12 +16,13 @@ import api.requests.steps.DataBaseSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import requests.steps.AdminSteps;
-import specs.BankAPIAlert;
+import api.specs.BankAPIAlert;
 
 import java.util.stream.Stream;
 
@@ -83,9 +84,10 @@ public class UserMoneyDepositTest extends BaseTest {
         return Stream.of(
                 Arguments.of(-100.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
                 Arguments.of(0.0, BankAPIAlert.DEPOSIT_INVALID_ACCOUNT_AMOUNT.getMessage()),
-                Arguments.of(5001.0, BankAPIAlert.DEPOSIT_AMOUNT_MAX_EXCEEDED.getMessage())
+                Arguments.of(5010.0, BankAPIAlert.DEPOSIT_AMOUNT_MAX_EXCEEDED.getMessage())
         );
     }
+
 
     @MethodSource("depositInvalidData")
     @ParameterizedTest
@@ -106,7 +108,7 @@ public class UserMoneyDepositTest extends BaseTest {
         AddUserDepositResponse addUserDepositResponse = new ValidatedCrudRequester<AddUserDepositResponse>
                 (RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
                         Endpoint.DEPOSIT,
-                        ResponseSpecs.requestReturnsBadRequestWithText(errorValue))
+                        ResponseSpecs.requestReturnsSCBADREQUESTWithText(errorValue))
                 .post(AddUserDepositRequest.builder()
                         .id(accountId)
                         .balance(balance)

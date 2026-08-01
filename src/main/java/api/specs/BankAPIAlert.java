@@ -1,4 +1,4 @@
-package specs;
+package api.specs;
 
 import lombok.Getter;
 
