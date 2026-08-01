@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "only-declared-status": {
+      "enable": false
+    },
+    "status": {
+      "filter": ["200", "201", "400", "500"]
+    }
+  }
+}
